@@ -84,6 +84,7 @@
             margin: 20px;
             display: none;
         }
+
     </style>
 </head>
 <body>
@@ -92,6 +93,10 @@
         Crocodile Number Game
         <img src="images/right-croc.jpg" alt="Right Crocodile">
     </div>
+    <div style="display: flex; justify-content: flex-start; margin-top: 20px;">
+        <button id="go-back">Go Back</button>
+    </div>
+
     <div class="mode-buttons">
         <button id="learn">Learn</button>
         <button id="test">Test</button>
@@ -100,7 +105,7 @@
     <div class="test-mode-message" id="test-mode-message">Test Mode - You will be provided 15 questions</div>
     <div class="compete-mode-message" id="compete-mode-message">Compete Mode - Answer as many questions as you can in 30 seconds</div>
     <div class="timer" id="timer">Time Left: 30s</div>
-    <div id="game">
+    <div id="game"  style="display: none;">
         <div class="game-container">
             <div class="number" id="num1"></div>
             <div class="choices">
@@ -279,8 +284,22 @@
             }, 1000);
         }
 
+        document.getElementById('go-back').addEventListener('click', () => {
+            clearInterval(timerInterval);
+            document.getElementById('go-back').style.display = 'none';
+            document.querySelector('.mode-buttons').style.display = 'block';
+            document.getElementById('game').style.display = 'none';
+            document.getElementById('test-mode-message').style.display = 'none';
+            document.getElementById('compete-mode-message').style.display = 'none';
+            document.getElementById('timer').style.display = 'none';
+            document.getElementById('results-table').style.display = 'none';
+            document.getElementById('summary-results').style.display = 'none';
+        });
+        
         document.getElementById('learn').addEventListener('click', () => {
             mode = 'learn';
+            document.getElementById('go-back').style.display = 'block';
+            document.querySelector('.mode-buttons').style.display = 'none';
             document.getElementById('game').style.display = 'block';
             document.getElementById('test-mode-message').style.display = 'none';
             document.getElementById('compete-mode-message').style.display = 'none';
@@ -294,6 +313,8 @@
             mode = 'test';
             questionCount = 0;
             results.length = 0;
+            document.getElementById('go-back').style.display = 'block';
+            document.querySelector('.mode-buttons').style.display = 'none';
             document.getElementById('game').style.display = 'block';
             document.getElementById('test-mode-message').style.display = 'block';
             document.getElementById('compete-mode-message').style.display = 'none';
@@ -307,6 +328,8 @@
             mode = 'compete';
             questionCount = 0;
             results.length = 0;
+            document.getElementById('go-back').style.display = 'block';
+            document.querySelector('.mode-buttons').style.display = 'none';
             document.getElementById('game').style.display = 'block';
             document.getElementById('test-mode-message').style.display = 'none';
             document.getElementById('compete-mode-message').style.display = 'block';
