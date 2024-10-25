@@ -1,0 +1,37 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+}
+
+#startButton {
+    padding: 10px 20px;
+    font-size: 16px;
+}
+
+#gameArea {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    background-color: #87CEEB;
+}
+
+.fruit, .blackstone {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+}
+
+#basket {
+    position: absolute;
+    bottom: 10px;
+    width: 100px;
+    height: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+}

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Comparison Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        .header {
+            background-color: black;
+            color: white;
+            padding: 20px;
+            font-size: 36px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .header img {
+            height: 50px;
+            margin: 0 20px;
+        }
+        .game-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 48px;
+            margin-top: 20px;
+        }
+        .number {
+            margin: 20px;
+            padding: 20px;
+            border: 5px solid green;
+        }
+        .choices {
+            display: flex;
+            flex-direction: column;
+        }
+        .choices button {
+            font-size: 24px;
+            margin: 10px;
+            padding: 10px 20px;
+        }
+        .choices button.selected {
+            background-color: yellow;
+        }
+        .feedback {
+            font-size: 24px;
+            margin: 20px;
+        }
+        .next-button {
+            display: none;
+            font-size: 24px;
+            padding: 10px 20px;
+        }
+        .mode-buttons button {
+            font-size: 24px;
+            margin: 10px;
+            padding: 10px 20px;
+        }
+        .test-mode-message {
+            font-size: 24px;
+            margin: 20px;
+            display: none;
+        }
+        .results-table {
+            margin-top: 20px;
+            display: none;
+        }
+        .results-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .results-table th, .results-table td {
+            border: 1px solid black;
+            padding: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="images/left-croc.jpg" alt="Left Crocodile">
+        Crocodile Number Game
+        <img src="images/right-croc.jpg" alt="Right Crocodile">
+    </div>
+    <div class="mode-buttons">
+        <button id="learn">Learn</button>
+        <button id="test">Test</button>
+        <button id="compete">Compete</button>
+    </div>
+    <div class="test-mode-message" id="test-mode-message">Test Mode - You will be provided 15 questions</div>
+    <div id="game">
+        <div class="game-container">
+            <div class="number" id="num1"></div>
+            <div class="choices">
+                <button id="equal">=</button>
+                <button id="greater">&gt;</button>
+                <button id="less">&lt;</button>
+            </div>
+            <div class="number" id="num2"></div>
+        </div>
+        <div class="feedback" id="feedback"></div>
+        <button class="next-button" id="next">Next Question</button>
+    </div>
+    <div class="results-table" id="results-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>Question</th>
+                    <th>Num1</th>
+                    <th>Num2</th>
+                    <th>Your Answer</th>
+                    <th>Correct Answer</th>
+                    <th>Result</th>
+                </tr>
+            </thead>
+            <tbody id="results-body">
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        let mode = '';
+        let questionCount = 0;
+        const maxQuestions = 15;
+        const results = [];
+
+        function getRandomNumber() {
+            return Math.floor(Math.random() * 100);
+        }
+
+        function displayNumbers(num1, num2) {
+            document.getElementById('num1').textContent = num1;
+            document.getElementById('num2').textContent = num2;
+        }
+
+        function checkAnswer(choice, num1, num2) {
+            let feedback = '';
+            let correct = false;
+            if ((choice === 'equal' && num1 === num2) ||
+                (choice === 'greater' && num1 > num2) ||
+                (choice === 'less' && num1 < num2)) {
+                feedback = 'Correct!';
+                correct = true;
+            } else {
+                feedback = `Wrong! ${num1} is ${num1 > num2 ? 'greater' : num1 < num2 ? 'less' : 'equal'} than ${num2}. Try again!`;
+            }
+            document.getElementById('feedback').textContent = feedback;
+            if (mode === 'learn' && correct) {
+                document.getElementById('next').style.display = 'inline-block';
+            }
+            return correct;
+        }
+
+        function nextQuestion() {
+            if (mode === 'test' && questionCount >= maxQuestions) {
+                displayResults();
+                return;
+            }
+            const num1 = getRandomNumber();
+            const num2 = getRandomNumber();
+            displayNumbers(num1, num2);
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('next').style.display = 'none';
+            document.querySelectorAll('.choices button').forEach(button => button.classList.remove('selected'));
+            questionCount++;
+        }
+
+        function handleChoice(choice) {
+            const num1 = parseInt(document.getElementById('num1').textContent);
+            const num2 = parseInt(document.getElementById('num2').textContent);
+            const correct = checkAnswer(choice, num1, num2);
+            document.querySelectorAll('.choices button').forEach(button => button.classList.remove('selected'));
+            document.getElementById(choice).classList.add('selected');
+            if (mode === 'test') {
+                results.push({
+                    question: questionCount,
+                    num1: num1,
+                    num2: num2,
+                    answer: choice,
+                    correct: correct
+                });
+                nextQuestion();
+            }
+        }
+
+        function displayResults() {
+            document.getElementById('game').style.display = 'none';
+            document.getElementById('test-mode-message').style.display = 'none';
+            const resultsTable = document.getElementById('results-table');
+            const resultsBody = document.getElementById('results-body');
+            resultsBody.innerHTML = '';
+            results.forEach(result => {
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${result.question}</td>
+                    <td>${result.num1}</td>
+                    <td>${result.num2}</td>
+                    <td>${result.answer}</td>
+                    <td>${result.num1 === result.num2 ? '=' : result.num1 > result.num2 ? '>' : '<'}</td>
+                    <td>${result.correct ? 'Correct' : 'Wrong'}</td>
+                `;
+                if (!result.correct) {
+                    row.style.backgroundColor = 'lightcoral';
+                }
+                resultsBody.appendChild(row);
+            });
+            resultsTable.style.display = 'block';
+        }
+
+        document.getElementById('learn').addEventListener('click', () => {
+            mode = 'learn';
+            document.getElementById('game').style.display = 'block';
+            document.getElementById('test-mode-message').style.display = 'none';
+            document.getElementById('results-table').style.display = 'none';
+            nextQuestion();
+        });
+
+        document.getElementById('test').addEventListener('click', () => {
+            mode = 'test';
+            questionCount = 0;
+            results.length = 0;
+            document.getElementById('game').style.display = 'block';
+            document.getElementById('test-mode-message').style.display = 'block';
+            document.getElementById('results-table').style.display = 'none';
+            nextQuestion();
+        });
+
+        document.getElementById('equal').addEventListener('click', () => handleChoice('equal'));
+        document.getElementById('greater').addEventListener('click', () => handleChoice('greater'));
+        document.getElementById('less').addEventListener('click', () => handleChoice('less'));
+        document.getElementById('next').addEventListener('click', nextQuestion);
+    </script>
+</body>
+</html>
