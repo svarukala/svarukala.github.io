@@ -9,10 +9,21 @@ You start with just a baseball bat at the ground floor. Fight through increasing
 ## 🕹️ How to Play
 
 ### Controls
-- **WASD** - Move your character
+
+**Keyboard & Mouse (Desktop)**:
+- **WASD / Arrow Keys** - Move your character
 - **Mouse** - Aim your weapon
-- **Left Click** - Attack
+- **Left Click / Space** - Attack
 - **E** - Switch between unlocked weapons
+- **V** - Open weapon menu
+- **Ctrl+P** - Pause game
+
+**Touch Controls (Mobile & Tablet)**:
+- **Virtual Joystick** (left side) - Move your character
+- **Attack Button** (right side) - Attack
+- **Touch Canvas** - Aim your weapon
+- **Pause Button** - Pause game
+- **Weapons Button** - Open weapon menu
 
 ### Game Mechanics
 
@@ -56,12 +67,16 @@ You start with just a baseball bat at the ground floor. Fight through increasing
 
 ## 🚀 Getting Started
 
-1. Open `index.html` in a modern web browser (Chrome, Firefox, Edge recommended)
-2. Click "Start Game" on the welcome screen
-3. Survive and fight your way to the top!
+1. Open `index.html` in a modern web browser (Chrome, Firefox, Edge, Safari recommended)
+2. Select your preferred control type (keyboard or touch - auto-detected for mobile devices)
+3. Click "Start Game" on the welcome screen
+4. Survive and fight your way to the top!
 
 ## 🎨 Features
 
+- **Cross-Platform Support**: Optimized for desktop, tablet, and mobile devices
+- **Dual Control Systems**: Full keyboard/mouse and touch screen support
+- **Responsive Design**: Adapts to different screen sizes and orientations
 - **Progressive Difficulty**: Zombies get tougher as you advance
 - **Multiple Weapon Types**: Unlock and switch between various weapons
 - **Particle Effects**: Visual feedback for hits and kills
@@ -98,14 +113,18 @@ You start with just a baseball bat at the ground floor. Fight through increasing
 
 - The game automatically creates simple beep sounds for actions
 - All game data is stored in memory (no saves between sessions)
-- Best played on desktop/laptop with mouse and keyboard
+- **Mobile & Tablet**: Automatically defaults to touch controls on mobile devices
+- **Desktop**: Best played with mouse and keyboard for precision
 - Browser must support HTML5 Canvas and Web Audio API
+- Responsive design adapts to your screen size and orientation
 
 ## 🐛 Troubleshooting
 
 - **No audio?** Make sure your browser allows audio playback
 - **Game too slow?** Try closing other browser tabs
 - **Controls not working?** Click on the canvas to focus the game
+- **Touch controls not appearing on mobile?** Select "Touch Screen" from the start screen
+- **Canvas too small/large?** Rotate your device or adjust zoom level
 
 ---
 

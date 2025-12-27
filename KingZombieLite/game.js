@@ -1046,6 +1046,9 @@ class Game {
         this.ctx = this.canvas.getContext('2d');
         this.audioManager = new AudioManager();
         
+        // Setup responsive canvas
+        this.setupResponsiveCanvas();
+        
         this.keys = {};
         this.mouseX = 0;
         this.mouseY = 0;
@@ -1054,7 +1057,7 @@ class Game {
         
         this.player = null;
         this.zombies = [];
-        this.obstacles = [];
+        this.obstacles = [];;
         this.healthPotions = [];
         this.tntBlocks = [];
         this.particles = [];
@@ -1064,13 +1067,72 @@ class Game {
         this.currentLevel = 1;
         this.gameState = 'start'; // start, playing, elevator, gameover, victory
         this.isPaused = false;
-        this.controlType = 'keyboard'; // keyboard or touch
+        
+        // Auto-detect mobile/touch devices
+        this.isMobileDevice = this.detectMobileDevice();
+        this.controlType = this.isMobileDevice ? 'touch' : 'keyboard';
+        
         this.joystick = { active: false, startX: 0, startY: 0, currentX: 0, currentY: 0 };
         this.potionRespawnTimer = 0;
         this.potionRespawnInterval = 600; // 10 seconds
         
         this.setupEventListeners();
         this.updateUI();
+        this.updateControlSelection();
+    }
+
+    detectMobileDevice() {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+               ('ontouchstart' in window) ||
+               (navigator.maxTouchPoints > 0) ||
+               window.innerWidth <= 900;
+    }
+
+    updateControlSelection() {
+        document.querySelectorAll('.control-btn').forEach(btn => btn.classList.remove('selected-control'));
+        if (this.controlType === 'keyboard') {
+            document.getElementById('keyboard-btn').classList.add('selected-control');
+        } else {
+            document.getElementById('touch-btn').classList.add('selected-control');
+        }
+    }
+
+    setupResponsiveCanvas() {
+        // Make canvas responsive while maintaining aspect ratio
+        const resizeCanvas = () => {
+            const container = this.canvas.parentElement;
+            const containerWidth = container.offsetWidth || window.innerWidth;
+            const aspectRatio = CONFIG.canvas.height / CONFIG.canvas.width;
+            
+            let newWidth = Math.min(containerWidth, CONFIG.canvas.width);
+            let newHeight = newWidth * aspectRatio;
+            
+            // Adjust for mobile screens
+            if (window.innerWidth <= 900) {
+                newWidth = window.innerWidth;
+                newHeight = newWidth * aspectRatio;
+                
+                // Ensure canvas fits in viewport height with room for controls
+                const maxHeight = window.innerHeight - 150; // Leave room for UI and touch controls
+                if (newHeight > maxHeight) {
+                    newHeight = maxHeight;
+                    newWidth = newHeight / aspectRatio;
+                }
+            }
+            
+            this.canvas.style.width = newWidth + 'px';
+            this.canvas.style.height = newHeight + 'px';
+            
+            // Keep internal resolution consistent
+            this.canvas.width = CONFIG.canvas.width;
+            this.canvas.height = CONFIG.canvas.height;
+        };
+        
+        resizeCanvas();
+        window.addEventListener('resize', () => resizeCanvas());
+        window.addEventListener('orientationchange', () => {
+            setTimeout(() => resizeCanvas(), 100);
+        });
     }
 
     setupEventListeners() {
@@ -1119,8 +1181,10 @@ class Game {
         // Mouse
         this.canvas.addEventListener('mousemove', (e) => {
             const rect = this.canvas.getBoundingClientRect();
-            this.mouseX = e.clientX - rect.left;
-            this.mouseY = e.clientY - rect.top;
+            const scaleX = CONFIG.canvas.width / rect.width;
+            const scaleY = CONFIG.canvas.height / rect.height;
+            this.mouseX = (e.clientX - rect.left) * scaleX;
+            this.mouseY = (e.clientY - rect.top) * scaleY;
         });
         
         this.canvas.addEventListener('mousedown', () => {
@@ -1149,12 +1213,7 @@ class Game {
 
     selectControlType(type) {
         this.controlType = type;
-        document.querySelectorAll('.control-btn').forEach(btn => btn.classList.remove('selected-control'));
-        if (type === 'keyboard') {
-            document.getElementById('keyboard-btn').classList.add('selected-control');
-        } else {
-            document.getElementById('touch-btn').classList.add('selected-control');
-        }
+        this.updateControlSelection();
     }
 
     setupTouchControls() {
@@ -1203,10 +1262,19 @@ class Game {
             if (this.controlType === 'touch' && this.gameState === 'playing') {
                 const touch = e.touches[0];
                 const rect = this.canvas.getBoundingClientRect();
-                this.mouseX = touch.clientX - rect.left;
-                this.mouseY = touch.clientY - rect.top;
+                const scaleX = CONFIG.canvas.width / rect.width;
+                const scaleY = CONFIG.canvas.height / rect.height;
+                this.mouseX = (touch.clientX - rect.left) * scaleX;
+                this.mouseY = (touch.clientY - rect.top) * scaleY;
             }
         });
+        
+        // Prevent default touch behaviors on canvas
+        this.canvas.addEventListener('touchstart', (e) => {
+            if (this.controlType === 'touch') {
+                e.preventDefault();
+            }
+        }, { passive: false });
     }
 
     updateJoystick(touchX, touchY, stick) {
