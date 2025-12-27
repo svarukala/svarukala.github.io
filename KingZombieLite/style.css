@@ -1,0 +1,300 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    color: #fff;
+}
+
+#game-container {
+    position: relative;
+    text-align: center;
+}
+
+#game-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 10px 10px 0 0;
+    font-size: 18px;
+    font-weight: bold;
+    flex-wrap: wrap;
+}
+
+#game-info > div {
+    margin: 0 15px;
+}
+
+.game-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.small-btn {
+    padding: 8px 15px;
+    font-size: 14px;
+    margin: 0;
+    background: rgba(233, 69, 96, 0.8);
+}
+
+.small-btn:hover {
+    background: rgba(255, 85, 119, 0.9);
+}
+
+#hearts-container {
+    color: #ff4444;
+    font-size: 24px;
+}
+
+#gameCanvas {
+    display: block;
+    background: #2a2a3e;
+    border: 3px solid #0f3460;
+    cursor: crosshair;
+}
+
+#controls-info {
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 0 0 10px 10px;
+    font-size: 14px;
+    color: #aaa;
+}
+
+.hidden {
+    display: none !important;
+}
+
+#elevator-screen,
+#game-over-screen,
+#victory-screen,
+#pause-screen,
+#weapon-menu-screen,
+#start-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.elevator-content,
+.screen-content {
+    background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
+    padding: 40px;
+    border-radius: 15px;
+    border: 3px solid #e94560;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow-y: auto;
+    text-align: center;
+}
+
+h1 {
+    font-size: 48px;
+    color: #e94560;
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
+    margin-bottom: 20px;
+}
+
+h2 {
+    font-size: 36px;
+    color: #e94560;
+    margin-bottom: 20px;
+}
+
+h3 {
+    font-size: 24px;
+    color: #fff;
+    margin: 20px 0 10px;
+}
+
+p {
+    font-size: 18px;
+    margin: 10px 0;
+    color: #ddd;
+}
+
+button {
+    margin-top: 20px;
+    padding: 15px 40px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+    background: #e94560;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+button:hover {
+    background: #ff5577;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+#weapons-list,
+#ingame-weapons-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+#weapons-list.two-columns,
+#ingame-weapons-list.two-columns {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.weapon-item {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.weapon-item:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: #e94560;
+    transform: scale(1.02);
+}
+
+.weapon-item.selected {
+    border-color: #4ecca3;
+    background: rgba(78, 204, 163, 0.3);
+    box-shadow: 0 0 15px rgba(78, 204, 163, 0.5);
+    transform: scale(1.05);
+}
+
+.weapon-item h4 {
+    color: #e94560;
+    margin-bottom: 5px;
+}
+
+.weapon-item p {
+    font-size: 14px;
+    color: #aaa;
+}
+
+#current-level,
+#current-score,
+#current-weapon {
+    color: #4ecca3;
+}
+
+/* Touch Controls */
+#touch-controls {
+    position: absolute;
+    bottom: 80px;
+    left: 0;
+    width: 900px;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 20px;
+    box-sizing: border-box;
+    pointer-events: none;
+}
+
+#joystick-container,
+#attack-button-container {
+    pointer-events: all;
+}
+
+#joystick-base {
+    width: 120px;
+    height: 120px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 3px solid rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    position: relative;
+    touch-action: none;
+}
+
+#joystick-stick {
+    width: 50px;
+    height: 50px;
+    background: rgba(233, 69, 96, 0.8);
+    border: 3px solid #fff;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: background 0.1s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+#attack-button {
+    width: 100px;
+    height: 100px;
+    background: #e94560;
+    border: 4px solid #fff;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+    transition: all 0.1s;
+    touch-action: none;
+}
+
+#attack-button:active {
+    background: #ff5577;
+    transform: scale(0.95);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+}
+
+.control-selection {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.control-btn {
+    padding: 15px 30px;
+    font-size: 16px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid #666;
+    color: #fff;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.control-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: #e94560;
+}
+
+.control-btn.selected-control {
+    background: #e94560;
+    border-color: #fff;
+    box-shadow: 0 0 15px rgba(233, 69, 96, 0.5);
+}

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>King Zombie Hunt</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <div id="game-info">
+            <div id="level-info">Level: <span id="current-level">1</span></div>
+            <div id="score-info">Score: <span id="current-score">0</span></div>
+            <div id="health-info">
+                <span id="hearts-container"></span>
+            </div>
+            <div id="weapon-info">Weapon: <span id="current-weapon">Baseball Bat</span></div>
+            <div class="game-buttons">
+                <button id="pause-btn" class="small-btn">⏸ Pause</button>
+                <button id="weapon-menu-btn" class="small-btn">🔫 Weapons (V)</button>
+            </div>
+        </div>
+        
+        <canvas id="gameCanvas" width="900" height="600"></canvas>
+        
+        <!-- Touch Controls -->
+        <div id="touch-controls" class="hidden">
+            <div id="joystick-container">
+                <div id="joystick-base">
+                    <div id="joystick-stick"></div>
+                </div>
+            </div>
+            <div id="attack-button-container">
+                <button id="attack-button">ATTACK</button>
+            </div>
+        </div>
+        
+        <div id="controls-info">
+            <p>WASD / Arrow Keys - Move | Mouse / Space - Attack | E - Switch | V - Weapons | Ctrl+P - Pause</p>
+        </div>
+
+        <div id="elevator-screen" class="hidden">
+            <div class="elevator-content">
+                <h2>ELEVATOR</h2>
+                <p>Going to Level <span id="next-level">2</span></p>
+                <p>Current Score: <span id="elevator-score">0</span></p>
+                <h3>Available Weapons:</h3>
+                <div id="weapons-list"></div>
+                <button id="continue-btn">Continue to Next Level</button>
+            </div>
+        </div>
+
+        <div id="game-over-screen" class="hidden">
+            <div class="screen-content">
+                <h2>GAME OVER</h2>
+                <p>You survived to Level <span id="final-level">1</span></p>
+                <p>Final Score: <span id="final-score">0</span></p>
+                <button id="restart-btn">Restart Game</button>
+            </div>
+        </div>
+
+        <div id="victory-screen" class="hidden">
+            <div class="screen-content">
+                <h2>VICTORY!</h2>
+                <p>You defeated the King Zombie!</p>
+                <p>Final Score: <span id="victory-score">0</span></p>
+                <button id="play-again-btn">Play Again</button>
+            </div>
+        </div>
+
+        <div id="pause-screen" class="hidden">
+            <div class="screen-content">
+                <h2>PAUSED</h2>
+                <p>Game is paused</p>
+                <button id="resume-btn">Resume Game</button>
+            </div>
+        </div>
+
+        <div id="weapon-menu-screen" class="hidden">
+            <div class="screen-content">
+                <h2>WEAPON SELECTION</h2>
+                <p>Choose your weapon:</p>
+                <div id="ingame-weapons-list"></div>
+                <button id="close-weapon-menu-btn">Close & Resume</button>
+            </div>
+        </div>
+
+        <div id="start-screen">
+            <div class="screen-content">
+                <h1>KING ZOMBIE HUNT</h1>
+                <p>The King Zombie awaits at Level 15...</p>
+                <p>Survive, upgrade, and eliminate the threat!</p>
+                <h3>Select Control Type:</h3>
+                <div class="control-selection">
+                    <button id="keyboard-btn" class="control-btn selected-control">⌨️ Keyboard</button>
+                    <button id="touch-btn" class="control-btn">📱 Touch Screen</button>
+                </div>
+                <button id="start-btn">Start Game</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
