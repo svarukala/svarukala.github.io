@@ -1101,23 +1101,51 @@ class Game {
         // Make canvas responsive while maintaining aspect ratio
         const resizeCanvas = () => {
             const container = this.canvas.parentElement;
-            const containerWidth = container.offsetWidth || window.innerWidth;
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
             const aspectRatio = CONFIG.canvas.height / CONFIG.canvas.width;
             
-            let newWidth = Math.min(containerWidth, CONFIG.canvas.width);
-            let newHeight = newWidth * aspectRatio;
+            let newWidth, newHeight;
             
-            // Adjust for mobile screens
-            if (window.innerWidth <= 900) {
-                newWidth = window.innerWidth;
-                newHeight = newWidth * aspectRatio;
-                
-                // Ensure canvas fits in viewport height with room for controls
-                const maxHeight = window.innerHeight - 150; // Leave room for UI and touch controls
-                if (newHeight > maxHeight) {
-                    newHeight = maxHeight;
+            // Check if mobile/tablet
+            if (viewportWidth <= 900) {
+                // Landscape mode on mobile
+                if (viewportHeight < viewportWidth) {
+                    // Use most of the viewport height, leave room for minimal UI
+                    const uiHeight = 80; // Top bar + controls info
+                    const touchControlsHeight = 120; // Touch controls at bottom
+                    const availableHeight = viewportHeight - uiHeight - touchControlsHeight;
+                    
+                    newHeight = Math.min(availableHeight, viewportHeight * 0.75);
                     newWidth = newHeight / aspectRatio;
+                    
+                    // If width is too large, constrain by width instead
+                    if (newWidth > viewportWidth) {
+                        newWidth = viewportWidth;
+                        newHeight = newWidth * aspectRatio;
+                    }
                 }
+                // Portrait mode on mobile
+                else {
+                    const uiHeight = 100; // Top bar + controls info
+                    const touchControlsHeight = 150; // Touch controls at bottom
+                    const availableHeight = viewportHeight - uiHeight - touchControlsHeight;
+                    
+                    // Use full width
+                    newWidth = viewportWidth;
+                    newHeight = newWidth * aspectRatio;
+                    
+                    // If height is too tall, constrain by available height
+                    if (newHeight > availableHeight) {
+                        newHeight = availableHeight;
+                        newWidth = newHeight / aspectRatio;
+                    }
+                }
+            }
+            // Desktop
+            else {
+                newWidth = Math.min(viewportWidth * 0.95, CONFIG.canvas.width);
+                newHeight = newWidth * aspectRatio;
             }
             
             this.canvas.style.width = newWidth + 'px';
@@ -1131,7 +1159,7 @@ class Game {
         resizeCanvas();
         window.addEventListener('resize', () => resizeCanvas());
         window.addEventListener('orientationchange', () => {
-            setTimeout(() => resizeCanvas(), 100);
+            setTimeout(() => resizeCanvas(), 200);
         });
     }
 

@@ -503,19 +503,128 @@ button:active {
     }
 }
 
-@media (orientation: landscape) and (max-height: 600px) {
+@media (max-width: 900px) and (orientation: landscape) {
+    #game-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        height: 100vh;
+    }
+
     #game-info {
-        padding: 4px;
+        padding: 3px 5px;
+        font-size: 10px;
+        flex-shrink: 0;
+    }
+
+    #gameCanvas {
+        flex-grow: 0;
+        flex-shrink: 0;
+    }
+
+    #controls-info {
+        padding: 3px;
+        font-size: 8px;
+        flex-shrink: 0;
+    }
+
+    body {
+        padding: 0;
+        margin: 0;
+    }
+}
+
+@media (orientation: landscape) and (max-height: 600px) {
+    body {
+        align-items: flex-start;
+        padding-top: 0;
+    }
+
+    #game-container {
+        margin-top: 0;
+    }
+
+    #game-info {
+        padding: 3px 5px;
+        font-size: 10px;
+        border-radius: 0;
+    }
+
+    #game-info > div {
+        font-size: 9px;
+        margin: 0 2px;
+    }
+
+    #hearts-container {
+        font-size: 14px;
+    }
+
+    .small-btn {
+        padding: 4px 8px;
+        font-size: 10px;
+    }
+
+    #controls-info {
+        padding: 3px;
+        font-size: 9px;
     }
 
     .elevator-content,
     .screen-content {
-        padding: 15px 10px;
+        padding: 10px;
         max-height: 95vh;
+        font-size: 12px;
+    }
+
+    .screen-content h1 {
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+
+    .screen-content h2 {
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+
+    .screen-content h3 {
+        font-size: 14px;
+        margin: 10px 0 5px;
+    }
+
+    .screen-content p {
+        font-size: 11px;
+        margin: 5px 0;
+    }
+
+    .screen-content button {
+        padding: 8px 20px;
+        font-size: 12px;
+        margin-top: 10px;
     }
 
     #touch-controls {
         bottom: 5px;
+        padding: 0 10px;
+    }
+
+    #joystick-base {
+        width: 80px;
+        height: 80px;
+    }
+
+    #joystick-stick {
+        width: 32px;
+        height: 32px;
+    }
+
+    #attack-button {
+        width: 70px;
+        height: 70px;
+        font-size: 10px;
+    }
+
+    #gameCanvas {
+        border-width: 1px;
     }
 }
 
