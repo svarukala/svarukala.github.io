@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poker Split - Settlement Calculator</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a472a 0%, #2d5a3f 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 5px;
+        }
+
+        header p {
+            opacity: 0.8;
+            font-size: 1.1rem;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            color: #333;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        .card h2 {
+            color: #1a472a;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #1a472a;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #1a472a;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #1a472a;
+        }
+
+        .form-group input.error {
+            border-color: #dc3545;
+        }
+
+        .player-names-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .player-name-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .player-name-input span {
+            font-weight: 600;
+            color: #1a472a;
+            min-width: 25px;
+        }
+
+        .player-name-input input {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        button {
+            background: #1a472a;
+            color: #fff;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        button:hover {
+            background: #2d5a3f;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        button.secondary {
+            background: #6c757d;
+        }
+
+        button.secondary:hover {
+            background: #5a6268;
+        }
+
+        button.danger {
+            background: #dc3545;
+        }
+
+        button.danger:hover {
+            background: #c82333;
+        }
+
+        button.small {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #1a472a;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e9ecef;
+        }
+
+        .pot-total {
+            background: #1a472a;
+            color: #fff;
+            padding: 15px 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.3rem;
+            margin: 20px 0;
+        }
+
+        .pot-total span {
+            font-weight: 700;
+        }
+
+        .wins-input {
+            width: 100px;
+            padding: 8px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            text-align: right;
+        }
+
+        .wins-input:focus {
+            outline: none;
+            border-color: #1a472a;
+        }
+
+        .validation-message {
+            padding: 12px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: 500;
+        }
+
+        .validation-message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .validation-message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .result-positive {
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        .result-negative {
+            color: #dc3545;
+            font-weight: 600;
+        }
+
+        .result-neutral {
+            color: #6c757d;
+            font-weight: 600;
+        }
+
+        .payment-arrow {
+            color: #1a472a;
+            font-weight: 700;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .section-divider {
+            height: 2px;
+            background: linear-gradient(to right, transparent, #1a472a, transparent);
+            margin: 25px 0;
+        }
+
+        .restored-banner {
+            background: #ffc107;
+            color: #212529;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .restored-banner button {
+            padding: 5px 12px;
+            font-size: 0.85rem;
+        }
+
+        .add-player-form {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            flex-wrap: wrap;
+        }
+
+        .add-player-form input {
+            flex: 1;
+            min-width: 150px;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        .add-player-form input:focus {
+            outline: none;
+            border-color: #1a472a;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            .card {
+                padding: 15px;
+            }
+
+            .player-names-grid {
+                grid-template-columns: 1fr;
+            }
+
+            th, td {
+                padding: 8px;
+                font-size: 0.9rem;
+            }
+
+            .wins-input {
+                width: 80px;
+            }
+
+            button {
+                padding: 10px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Poker Split</h1>
+            <p>Settlement Calculator for Home Games</p>
+        </header>
+
+        <!-- Setup Section -->
+        <section id="setup-section" class="card">
+            <h2>Game Setup</h2>
+
+            <div class="form-group">
+                <label for="player-count">Number of Players (2-10)</label>
+                <input type="number" id="player-count" min="2" max="10" value="4">
+            </div>
+
+            <div class="form-group">
+                <label for="buyin-amount">Buy-in Amount ($)</label>
+                <input type="number" id="buyin-amount" min="1" step="0.01" value="20">
+            </div>
+
+            <div class="form-group">
+                <label>Player Names</label>
+                <div id="player-names-container" class="player-names-grid"></div>
+            </div>
+
+            <button id="start-game-btn">Start Game</button>
+        </section>
+
+        <!-- Game Section -->
+        <section id="game-section" class="card hidden">
+            <div id="restored-banner" class="restored-banner hidden">
+                <span>Game restored from previous session</span>
+                <button class="small secondary" onclick="dismissBanner()">Dismiss</button>
+            </div>
+            <h2>Game in Progress</h2>
+
+            <table id="game-table">
+                <thead>
+                    <tr>
+                        <th>Player</th>
+                        <th>Buy-ins</th>
+                        <th>Total Invested</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="game-table-body"></tbody>
+            </table>
+
+            <div class="pot-total">
+                Total Pot: <span id="pot-total">$0.00</span>
+            </div>
+
+            <div class="add-player-form">
+                <input type="text" id="new-player-name" placeholder="New player name">
+                <button id="add-player-btn" class="small">+ Add Player</button>
+            </div>
+
+            <div class="btn-group">
+                <button id="end-game-btn">End Game</button>
+                <button id="cancel-game-btn" class="secondary">Cancel Game</button>
+            </div>
+        </section>
+
+        <!-- Settlement Section -->
+        <section id="settlement-section" class="card hidden">
+            <h2>Enter Final Amounts</h2>
+            <p style="margin-bottom: 15px; color: #666;">Enter how much each player ended with (in dollars).</p>
+
+            <table id="settlement-table">
+                <thead>
+                    <tr>
+                        <th>Player</th>
+                        <th>Invested</th>
+                        <th>Final Amount ($)</th>
+                    </tr>
+                </thead>
+                <tbody id="settlement-table-body"></tbody>
+            </table>
+
+            <div id="validation-message" class="validation-message hidden"></div>
+
+            <div class="pot-total">
+                Total Pot: <span id="settlement-pot-total">$0.00</span> |
+                Entered: <span id="entered-total">$0.00</span>
+            </div>
+
+            <div class="btn-group">
+                <button id="calculate-btn">Calculate Settlement</button>
+                <button id="back-to-game-btn" class="secondary">Back to Game</button>
+            </div>
+        </section>
+
+        <!-- Results Section -->
+        <section id="results-section" class="card hidden">
+            <h2>Game Summary</h2>
+
+            <table id="summary-table">
+                <thead>
+                    <tr>
+                        <th>Player</th>
+                        <th>Invested</th>
+                        <th>Final</th>
+                        <th>Net Result</th>
+                    </tr>
+                </thead>
+                <tbody id="summary-table-body"></tbody>
+            </table>
+
+            <div class="section-divider"></div>
+
+            <h2>Payment Instructions</h2>
+            <p style="margin-bottom: 15px; color: #666;">Follow these payments to settle up:</p>
+
+            <table id="payments-table">
+                <thead>
+                    <tr>
+                        <th>From</th>
+                        <th></th>
+                        <th>To</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody id="payments-table-body"></tbody>
+            </table>
+
+            <div class="btn-group">
+                <button id="new-game-btn">New Game</button>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'pokerSplitGameState';
+
+        // Game State
+        let gameState = {
+            buyInAmount: 0,
+            players: [],
+            phase: 'setup', // setup, playing, settlement, complete
+            results: null,  // stored results for complete phase
+            payments: null  // stored payments for complete phase
+        };
+
+        // Save state to localStorage
+        function saveState() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(gameState));
+            } catch (e) {
+                console.warn('Could not save to localStorage:', e);
+            }
+        }
+
+        // Load state from localStorage
+        function loadState() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (parsed && parsed.phase) {
+                        gameState = parsed;
+                        return true;
+                    }
+                }
+            } catch (e) {
+                console.warn('Could not load from localStorage:', e);
+            }
+            return false;
+        }
+
+        // Clear saved state
+        function clearState() {
+            try {
+                localStorage.removeItem(STORAGE_KEY);
+            } catch (e) {
+                console.warn('Could not clear localStorage:', e);
+            }
+        }
+
+        // DOM Elements
+        const playerCountInput = document.getElementById('player-count');
+        const buyinAmountInput = document.getElementById('buyin-amount');
+        const playerNamesContainer = document.getElementById('player-names-container');
+        const startGameBtn = document.getElementById('start-game-btn');
+
+        const setupSection = document.getElementById('setup-section');
+        const gameSection = document.getElementById('game-section');
+        const settlementSection = document.getElementById('settlement-section');
+        const resultsSection = document.getElementById('results-section');
+
+        const gameTableBody = document.getElementById('game-table-body');
+        const potTotalSpan = document.getElementById('pot-total');
+        const endGameBtn = document.getElementById('end-game-btn');
+        const cancelGameBtn = document.getElementById('cancel-game-btn');
+
+        const settlementTableBody = document.getElementById('settlement-table-body');
+        const settlementPotTotal = document.getElementById('settlement-pot-total');
+        const enteredTotal = document.getElementById('entered-total');
+        const validationMessage = document.getElementById('validation-message');
+        const calculateBtn = document.getElementById('calculate-btn');
+        const backToGameBtn = document.getElementById('back-to-game-btn');
+
+        const summaryTableBody = document.getElementById('summary-table-body');
+        const paymentsTableBody = document.getElementById('payments-table-body');
+        const newGameBtn = document.getElementById('new-game-btn');
+
+        // Initialize player name inputs
+        function initializePlayerNameInputs() {
+            const count = parseInt(playerCountInput.value) || 4;
+            playerNamesContainer.innerHTML = '';
+
+            for (let i = 0; i < count; i++) {
+                const div = document.createElement('div');
+                div.className = 'player-name-input';
+                div.innerHTML = `
+                    <span>${i + 1}.</span>
+                    <input type="text" class="player-name" placeholder="Player ${i + 1}" data-index="${i}">
+                `;
+                playerNamesContainer.appendChild(div);
+            }
+        }
+
+        // Start the game
+        function startGame() {
+            const count = parseInt(playerCountInput.value);
+            const buyIn = parseFloat(buyinAmountInput.value);
+
+            if (count < 2 || count > 10) {
+                alert('Please enter between 2 and 10 players.');
+                return;
+            }
+
+            if (buyIn <= 0 || isNaN(buyIn)) {
+                alert('Please enter a valid buy-in amount.');
+                return;
+            }
+
+            const nameInputs = document.querySelectorAll('.player-name');
+            const players = [];
+
+            for (let input of nameInputs) {
+                const name = input.value.trim() || `Player ${parseInt(input.dataset.index) + 1}`;
+                players.push({
+                    name: name,
+                    buyIns: 1,
+                    wins: 0
+                });
+            }
+
+            gameState = {
+                buyInAmount: buyIn,
+                players: players,
+                phase: 'playing',
+                results: null,
+                payments: null
+            };
+
+            saveState();
+            hideRestoredBanner();
+            showSection('game');
+            renderGameTable();
+        }
+
+        // Add a new player to the game
+        function addPlayer() {
+            const nameInput = document.getElementById('new-player-name');
+            const name = nameInput.value.trim() || `Player ${gameState.players.length + 1}`;
+
+            gameState.players.push({
+                name: name,
+                buyIns: 1,
+                wins: 0
+            });
+
+            nameInput.value = '';
+            saveState();
+            renderGameTable();
+        }
+
+        // Add buy-in for a player
+        function addBuyIn(playerIndex) {
+            gameState.players[playerIndex].buyIns++;
+            saveState();
+            renderGameTable();
+        }
+
+        // Remove buy-in for a player (minimum 1)
+        function removeBuyIn(playerIndex) {
+            if (gameState.players[playerIndex].buyIns > 1) {
+                gameState.players[playerIndex].buyIns--;
+                saveState();
+                renderGameTable();
+            }
+        }
+
+        // Calculate total pot
+        function calculatePot() {
+            return gameState.players.reduce((sum, player) => {
+                return sum + (player.buyIns * gameState.buyInAmount);
+            }, 0);
+        }
+
+        // Render game table
+        function renderGameTable() {
+            gameTableBody.innerHTML = '';
+
+            gameState.players.forEach((player, index) => {
+                const invested = player.buyIns * gameState.buyInAmount;
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${player.name}</td>
+                    <td>${player.buyIns}</td>
+                    <td>$${invested.toFixed(2)}</td>
+                    <td>
+                        <button class="small" onclick="addBuyIn(${index})">+ Add</button>
+                        <button class="small secondary" onclick="removeBuyIn(${index})" ${player.buyIns <= 1 ? 'disabled' : ''}>- Remove</button>
+                    </td>
+                `;
+                gameTableBody.appendChild(row);
+            });
+
+            potTotalSpan.textContent = '$' + calculatePot().toFixed(2);
+        }
+
+        // End game and go to settlement
+        function endGame() {
+            gameState.phase = 'settlement';
+            saveState();
+            showSection('settlement');
+            renderSettlementTable();
+        }
+
+        // Render settlement table
+        function renderSettlementTable() {
+            settlementTableBody.innerHTML = '';
+            const pot = calculatePot();
+
+            gameState.players.forEach((player, index) => {
+                const invested = player.buyIns * gameState.buyInAmount;
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${player.name}</td>
+                    <td>$${invested.toFixed(2)}</td>
+                    <td>
+                        <input type="number" class="wins-input"
+                            id="wins-${index}"
+                            min="0"
+                            step="0.01"
+                            value="${player.wins || ''}"
+                            oninput="updateEnteredTotal()">
+                    </td>
+                `;
+                settlementTableBody.appendChild(row);
+            });
+
+            settlementPotTotal.textContent = '$' + pot.toFixed(2);
+            updateEnteredTotal();
+        }
+
+        // Update entered total
+        function updateEnteredTotal() {
+            let total = 0;
+            const pot = calculatePot();
+
+            gameState.players.forEach((player, index) => {
+                const input = document.getElementById(`wins-${index}`);
+                const value = parseFloat(input.value) || 0;
+                player.wins = value; // Save wins value as user types
+                total += value;
+            });
+
+            saveState(); // Persist wins values
+            enteredTotal.textContent = '$' + total.toFixed(2);
+
+            const diff = Math.abs(total - pot);
+            if (diff < 0.01) {
+                enteredTotal.style.color = '#28a745';
+                validationMessage.classList.add('hidden');
+            } else {
+                enteredTotal.style.color = '#dc3545';
+            }
+        }
+
+        // Validate wins
+        function validateWins() {
+            const pot = calculatePot();
+            let total = 0;
+
+            gameState.players.forEach((player, index) => {
+                const input = document.getElementById(`wins-${index}`);
+                const value = parseFloat(input.value) || 0;
+                player.wins = value;
+                total += value;
+            });
+
+            const diff = Math.abs(total - pot);
+            if (diff >= 0.01) {
+                validationMessage.textContent = `Total entered ($${total.toFixed(2)}) does not match pot ($${pot.toFixed(2)}). Difference: $${(total - pot).toFixed(2)}`;
+                validationMessage.className = 'validation-message error';
+                validationMessage.classList.remove('hidden');
+                return false;
+            }
+
+            validationMessage.classList.add('hidden');
+            return true;
+        }
+
+        // Calculate settlements
+        function calculateSettlements() {
+            if (!validateWins()) return;
+
+            gameState.phase = 'complete';
+
+            // Calculate net for each player
+            const results = gameState.players.map((player, index) => {
+                const invested = player.buyIns * gameState.buyInAmount;
+                const net = player.wins - invested;
+                return {
+                    name: player.name,
+                    invested: invested,
+                    wins: player.wins,
+                    net: net
+                };
+            });
+
+            // Separate into debtors and creditors
+            let debtors = results.filter(r => r.net < 0).map(r => ({
+                name: r.name,
+                amount: Math.abs(r.net)
+            }));
+
+            let creditors = results.filter(r => r.net > 0).map(r => ({
+                name: r.name,
+                amount: r.net
+            }));
+
+            // Sort by amount descending
+            debtors.sort((a, b) => b.amount - a.amount);
+            creditors.sort((a, b) => b.amount - a.amount);
+
+            // Calculate payments
+            const payments = [];
+
+            while (debtors.length > 0 && creditors.length > 0) {
+                const debtor = debtors[0];
+                const creditor = creditors[0];
+
+                const payment = Math.min(debtor.amount, creditor.amount);
+
+                if (payment > 0.01) {
+                    payments.push({
+                        from: debtor.name,
+                        to: creditor.name,
+                        amount: payment
+                    });
+                }
+
+                debtor.amount -= payment;
+                creditor.amount -= payment;
+
+                if (debtor.amount < 0.01) debtors.shift();
+                if (creditor.amount < 0.01) creditors.shift();
+            }
+
+            // Store results and payments for reload
+            gameState.results = results;
+            gameState.payments = payments;
+            saveState();
+
+            showSection('results');
+            renderResults(results, payments);
+        }
+
+        // Render results
+        function renderResults(results, payments) {
+            // Summary table
+            summaryTableBody.innerHTML = '';
+            results.forEach(result => {
+                const row = document.createElement('tr');
+                let netClass = 'result-neutral';
+                let netPrefix = '';
+
+                if (result.net > 0.01) {
+                    netClass = 'result-positive';
+                    netPrefix = '+';
+                } else if (result.net < -0.01) {
+                    netClass = 'result-negative';
+                }
+
+                row.innerHTML = `
+                    <td>${result.name}</td>
+                    <td>$${result.invested.toFixed(2)}</td>
+                    <td>$${result.wins.toFixed(2)}</td>
+                    <td class="${netClass}">${netPrefix}$${result.net.toFixed(2)}</td>
+                `;
+                summaryTableBody.appendChild(row);
+            });
+
+            // Payments table
+            paymentsTableBody.innerHTML = '';
+            if (payments.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = '<td colspan="4" style="text-align: center;">Everyone broke even - no payments needed!</td>';
+                paymentsTableBody.appendChild(row);
+            } else {
+                payments.forEach(payment => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><strong>${payment.from}</strong></td>
+                        <td class="payment-arrow">pays &rarr;</td>
+                        <td><strong>${payment.to}</strong></td>
+                        <td><strong>$${payment.amount.toFixed(2)}</strong></td>
+                    `;
+                    paymentsTableBody.appendChild(row);
+                });
+            }
+        }
+
+        // Show section
+        function showSection(section) {
+            setupSection.classList.add('hidden');
+            gameSection.classList.add('hidden');
+            settlementSection.classList.add('hidden');
+            resultsSection.classList.add('hidden');
+
+            switch(section) {
+                case 'setup':
+                    setupSection.classList.remove('hidden');
+                    break;
+                case 'game':
+                    gameSection.classList.remove('hidden');
+                    break;
+                case 'settlement':
+                    settlementSection.classList.remove('hidden');
+                    break;
+                case 'results':
+                    resultsSection.classList.remove('hidden');
+                    break;
+            }
+        }
+
+        // Reset to new game
+        function resetGame() {
+            gameState = {
+                buyInAmount: 0,
+                players: [],
+                phase: 'setup',
+                results: null,
+                payments: null
+            };
+            clearState();
+            hideRestoredBanner();
+            showSection('setup');
+            initializePlayerNameInputs();
+        }
+
+        // Back to game from settlement
+        function backToGame() {
+            gameState.phase = 'playing';
+            saveState();
+            showSection('game');
+        }
+
+        // Cancel game
+        function cancelGame() {
+            if (confirm('Are you sure you want to cancel this game? All data will be lost.')) {
+                resetGame();
+            }
+        }
+
+        // Event listeners
+        playerCountInput.addEventListener('change', initializePlayerNameInputs);
+        playerCountInput.addEventListener('input', initializePlayerNameInputs);
+        startGameBtn.addEventListener('click', startGame);
+        document.getElementById('add-player-btn').addEventListener('click', addPlayer);
+        document.getElementById('new-player-name').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addPlayer();
+        });
+        endGameBtn.addEventListener('click', endGame);
+        cancelGameBtn.addEventListener('click', cancelGame);
+        calculateBtn.addEventListener('click', calculateSettlements);
+        backToGameBtn.addEventListener('click', backToGame);
+        newGameBtn.addEventListener('click', resetGame);
+
+        // Hide restored banner
+        function hideRestoredBanner() {
+            const banner = document.getElementById('restored-banner');
+            if (banner) {
+                banner.classList.add('hidden');
+            }
+        }
+
+        // Dismiss restored banner (called from onclick)
+        function dismissBanner() {
+            hideRestoredBanner();
+        }
+
+        // Show restored banner (only for actual restores)
+        function showRestoredBanner() {
+            const banner = document.getElementById('restored-banner');
+            if (banner) {
+                banner.classList.remove('hidden');
+                // Auto-hide after 5 seconds
+                setTimeout(hideRestoredBanner, 5000);
+            }
+        }
+
+        // Restore game from saved state
+        function restoreGame() {
+            if (loadState()) {
+                let restored = false;
+                switch (gameState.phase) {
+                    case 'playing':
+                        showSection('game');
+                        renderGameTable();
+                        restored = true;
+                        break;
+                    case 'settlement':
+                        showSection('settlement');
+                        renderSettlementTable();
+                        restored = true;
+                        break;
+                    case 'complete':
+                        if (gameState.results && gameState.payments) {
+                            showSection('results');
+                            renderResults(gameState.results, gameState.payments);
+                            restored = true;
+                        } else {
+                            // Recalculate if results not saved
+                            showSection('settlement');
+                            renderSettlementTable();
+                            restored = true;
+                        }
+                        break;
+                    default:
+                        showSection('setup');
+                        initializePlayerNameInputs();
+                }
+                if (restored) {
+                    showRestoredBanner();
+                }
+            } else {
+                initializePlayerNameInputs();
+            }
+        }
+
+        // Initialize
+        restoreGame();
+    </script>
+</body>
+</html>

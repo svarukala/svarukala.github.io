@@ -478,6 +478,12 @@
                     <input type="text" id="secret-word" placeholder="Type a word...">
                 </div>
 
+                <div id="ai-input" class="form-group" style="margin-top: 16px; display: none;">
+                    <label for="word-category">Category (optional)</label>
+                    <input type="text" id="word-category" placeholder="e.g., animals, food, movies...">
+                    <small style="color: #888; display: block; margin-top: 6px;">Leave blank for any random word</small>
+                </div>
+
                 <div class="collapsible">
                     <div class="collapsible-header" id="api-header">
                         <span>OpenAI API Settings</span>
@@ -592,7 +598,9 @@
             hiddenContent: document.getElementById('hidden-content'),
             revealedContent: document.getElementById('revealed-content'),
             apiStatus: document.getElementById('api-status'),
-            manualInput: document.getElementById('manual-input')
+            manualInput: document.getElementById('manual-input'),
+            aiInput: document.getElementById('ai-input'),
+            wordCategory: document.getElementById('word-category')
         };
 
         // Initialize
@@ -609,9 +617,10 @@
                     option.classList.add('selected');
                     option.querySelector('input').checked = true;
 
-                    // Show/hide manual input
+                    // Show/hide manual input or AI input
                     const method = option.querySelector('input').value;
                     elements.manualInput.style.display = method === 'manual' ? 'block' : 'none';
+                    elements.aiInput.style.display = method === 'ai' ? 'block' : 'none';
                 });
             });
 
@@ -687,11 +696,19 @@
         }
 
         // OpenAI Integration
-        async function generateWordWithAI() {
+        async function generateWordWithAI(category = '') {
             const apiKey = elements.apiKey.value.trim() || localStorage.getItem('openai_api_key');
 
             if (!apiKey) {
                 throw new Error('Please enter or save an OpenAI API key');
+            }
+
+            let systemPrompt = 'You are a word generator for a party game. Generate a single common noun that would be good for a word guessing game. The word should be something most people would know. Respond with ONLY the word, nothing else.';
+            let userPrompt = 'Generate a random word for our game.';
+
+            if (category.trim()) {
+                systemPrompt = `You are a word generator for a party game. Generate a single word from the category "${category}" that would be good for a word guessing game. The word should be something most people would know. Respond with ONLY the word, nothing else.`;
+                userPrompt = `Generate a random word from the category: ${category}`;
             }
 
             const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -705,11 +722,11 @@
                     messages: [
                         {
                             role: 'system',
-                            content: 'You are a word generator for a party game. Generate a single common noun that would be good for a word guessing game. The word should be something most people would know. Respond with ONLY the word, nothing else.'
+                            content: systemPrompt
                         },
                         {
                             role: 'user',
-                            content: 'Generate a random word for our game.'
+                            content: userPrompt
                         }
                     ],
                     max_tokens: 20,
@@ -777,7 +794,8 @@
                 try {
                     elements.loadingConfig.classList.add('show');
                     elements.startGameBtn.disabled = true;
-                    word = await generateWordWithAI();
+                    const category = elements.wordCategory.value.trim();
+                    word = await generateWordWithAI(category);
                 } catch (error) {
                     showError(error.message);
                     elements.loadingConfig.classList.remove('show');
@@ -849,6 +867,7 @@
 
             // Reset form
             elements.secretWord.value = '';
+            elements.wordCategory.value = '';
             hideError();
 
             showScreen('config');
