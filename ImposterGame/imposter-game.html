@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Imposter Game</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .screen {
+            display: none;
+            flex-direction: column;
+            flex: 1;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 24px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            margin-bottom: 16px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 8px;
+            background: linear-gradient(90deg, #e94560, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 16px;
+            color: #e94560;
+        }
+
+        h3 {
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+            color: #ccc;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 32px;
+            font-size: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ccc;
+            font-size: 0.95rem;
+        }
+
+        input[type="number"],
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #e94560;
+        }
+
+        input::placeholder {
+            color: #666;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            padding: 14px 16px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .radio-option:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .radio-option.selected {
+            border-color: #e94560;
+            background: rgba(233, 69, 96, 0.1);
+        }
+
+        .radio-option input[type="radio"] {
+            margin-right: 12px;
+            width: 20px;
+            height: 20px;
+            accent-color: #e94560;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 8px;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #e94560, #ff6b6b);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(233, 69, 96, 0.4);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 6px 20px rgba(233, 69, 96, 0.5);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #00b894, #00cec9);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(0, 184, 148, 0.4);
+        }
+
+        .btn-small {
+            padding: 10px 16px;
+            font-size: 0.9rem;
+            width: auto;
+        }
+
+        .collapsible {
+            margin-top: 16px;
+        }
+
+        .collapsible-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .collapsible-header:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .collapsible-header .arrow {
+            transition: transform 0.3s;
+        }
+
+        .collapsible-header.open .arrow {
+            transform: rotate(180deg);
+        }
+
+        .collapsible-content {
+            display: none;
+            padding: 16px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 0 0 10px 10px;
+            margin-top: -5px;
+        }
+
+        .collapsible-content.open {
+            display: block;
+        }
+
+        .api-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px;
+            font-size: 0.9rem;
+        }
+
+        .api-status .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .api-status .dot.saved {
+            background: #00b894;
+        }
+
+        .api-status .dot.not-saved {
+            background: #ff6b6b;
+        }
+
+        .error-message {
+            background: rgba(255, 107, 107, 0.2);
+            border: 1px solid #ff6b6b;
+            color: #ff6b6b;
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        /* Handoff Screen */
+        .handoff-screen {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .handoff-icon {
+            font-size: 4rem;
+            margin-bottom: 24px;
+        }
+
+        .handoff-text {
+            font-size: 1.5rem;
+            margin-bottom: 32px;
+            color: #ccc;
+        }
+
+        .player-number {
+            color: #e94560;
+            font-weight: 700;
+        }
+
+        /* Reveal Screen */
+        .reveal-screen {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .reveal-card {
+            width: 100%;
+            padding: 40px 24px;
+            border-radius: 20px;
+            margin-bottom: 24px;
+        }
+
+        .reveal-card.word {
+            background: linear-gradient(135deg, #00b894, #00cec9);
+            box-shadow: 0 8px 32px rgba(0, 184, 148, 0.4);
+        }
+
+        .reveal-card.imposter {
+            background: linear-gradient(135deg, #e94560, #ff6b6b);
+            box-shadow: 0 8px 32px rgba(233, 69, 96, 0.4);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .reveal-label {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-bottom: 12px;
+        }
+
+        .reveal-content {
+            font-size: 2.5rem;
+            font-weight: 700;
+            word-break: break-word;
+        }
+
+        .hidden-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .hidden-icon {
+            font-size: 4rem;
+            opacity: 0.5;
+        }
+
+        /* Game Ready Screen */
+        .ready-screen {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .ready-icon {
+            font-size: 5rem;
+            margin-bottom: 24px;
+        }
+
+        .ready-title {
+            font-size: 2rem;
+            margin-bottom: 16px;
+            color: #00cec9;
+        }
+
+        .ready-subtitle {
+            font-size: 1.2rem;
+            color: #888;
+            margin-bottom: 32px;
+        }
+
+        .instructions {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: left;
+            margin-bottom: 32px;
+        }
+
+        .instructions h4 {
+            color: #e94560;
+            margin-bottom: 12px;
+        }
+
+        .instructions ul {
+            padding-left: 20px;
+            color: #ccc;
+            line-height: 1.8;
+        }
+
+        /* Loading */
+        .loading {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 16px;
+        }
+
+        .loading.show {
+            display: flex;
+        }
+
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            border-top-color: #e94560;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-row .btn {
+            flex: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 360px) {
+            h1 { font-size: 2rem; }
+            .reveal-content { font-size: 2rem; }
+            .card { padding: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Screen 1: Configuration -->
+        <div id="config-screen" class="screen active">
+            <h1>Imposter</h1>
+            <p class="subtitle">A party word game</p>
+
+            <div id="error-config" class="error-message"></div>
+
+            <div class="card">
+                <h2>Game Setup</h2>
+
+                <div class="form-group">
+                    <label for="player-count">Number of Players</label>
+                    <input type="number" id="player-count" min="3" max="20" value="4" placeholder="Minimum 3">
+                </div>
+
+                <div class="form-group">
+                    <label for="imposter-count">Number of Imposters</label>
+                    <input type="number" id="imposter-count" min="1" max="10" value="1" placeholder="Minimum 1">
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Secret Word</h2>
+
+                <div class="radio-group">
+                    <label class="radio-option selected" id="option-manual">
+                        <input type="radio" name="word-method" value="manual" checked>
+                        <span>Enter word manually</span>
+                    </label>
+                    <label class="radio-option" id="option-ai">
+                        <input type="radio" name="word-method" value="ai">
+                        <span>Generate with AI</span>
+                    </label>
+                </div>
+
+                <div id="manual-input" class="form-group" style="margin-top: 16px;">
+                    <label for="secret-word">Enter the Secret Word</label>
+                    <input type="text" id="secret-word" placeholder="Type a word...">
+                </div>
+
+                <div class="collapsible">
+                    <div class="collapsible-header" id="api-header">
+                        <span>OpenAI API Settings</span>
+                        <span class="arrow">&#9660;</span>
+                    </div>
+                    <div class="collapsible-content" id="api-content">
+                        <div class="form-group">
+                            <label for="api-key">API Key</label>
+                            <input type="password" id="api-key" placeholder="sk-...">
+                        </div>
+                        <div class="btn-row">
+                            <button class="btn btn-secondary btn-small" id="save-api-btn">Save Key</button>
+                            <button class="btn btn-secondary btn-small" id="clear-api-btn">Clear</button>
+                        </div>
+                        <div class="api-status" id="api-status">
+                            <span class="dot not-saved"></span>
+                            <span>No API key saved</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="loading" id="loading-config">
+                <div class="spinner"></div>
+                <span>Generating word...</span>
+            </div>
+
+            <button class="btn btn-primary" id="start-game-btn">Start Game</button>
+        </div>
+
+        <!-- Screen 2: Handoff -->
+        <div id="handoff-screen" class="screen handoff-screen">
+            <div class="handoff-icon">&#128241;</div>
+            <div class="handoff-text">
+                Pass the phone to<br>
+                <span class="player-number" id="handoff-player">Player #1</span>
+            </div>
+            <button class="btn btn-primary" id="ready-btn">I'm Ready</button>
+        </div>
+
+        <!-- Screen 3: Reveal -->
+        <div id="reveal-screen" class="screen reveal-screen">
+            <h2 id="reveal-player">Player #1</h2>
+
+            <div class="hidden-content" id="hidden-content">
+                <div class="hidden-icon">&#128064;</div>
+                <p>Tap below to see your role</p>
+                <button class="btn btn-primary" id="show-btn">Show My Word</button>
+            </div>
+
+            <div id="revealed-content" style="display: none; width: 100%;">
+                <div class="reveal-card" id="reveal-card">
+                    <div class="reveal-label" id="reveal-label">Your word is:</div>
+                    <div class="reveal-content" id="reveal-word"></div>
+                </div>
+                <button class="btn btn-secondary" id="hide-pass-btn">Hide & Pass to Next Player</button>
+            </div>
+        </div>
+
+        <!-- Screen 4: Game Ready -->
+        <div id="ready-screen" class="screen ready-screen">
+            <div class="ready-icon">&#127881;</div>
+            <div class="ready-title">Everyone's Ready!</div>
+            <div class="ready-subtitle">The game can now begin</div>
+
+            <div class="instructions">
+                <h4>How to Play:</h4>
+                <ul>
+                    <li>Players discuss and ask questions</li>
+                    <li>Try to figure out who the imposter is</li>
+                    <li>Imposters: blend in and don't get caught!</li>
+                    <li>Vote to eliminate suspected imposters</li>
+                </ul>
+            </div>
+
+            <button class="btn btn-primary" id="new-game-btn">Start New Game</button>
+        </div>
+    </div>
+
+    <script>
+        // Game State
+        const gameState = {
+            totalPlayers: 0,
+            totalImposters: 0,
+            secretWord: '',
+            imposterIndices: [],
+            currentPlayer: 0,
+            gamePhase: 'config'
+        };
+
+        // DOM Elements
+        const screens = {
+            config: document.getElementById('config-screen'),
+            handoff: document.getElementById('handoff-screen'),
+            reveal: document.getElementById('reveal-screen'),
+            ready: document.getElementById('ready-screen')
+        };
+
+        const elements = {
+            playerCount: document.getElementById('player-count'),
+            imposterCount: document.getElementById('imposter-count'),
+            secretWord: document.getElementById('secret-word'),
+            apiKey: document.getElementById('api-key'),
+            errorConfig: document.getElementById('error-config'),
+            loadingConfig: document.getElementById('loading-config'),
+            startGameBtn: document.getElementById('start-game-btn'),
+            handoffPlayer: document.getElementById('handoff-player'),
+            revealPlayer: document.getElementById('reveal-player'),
+            revealCard: document.getElementById('reveal-card'),
+            revealLabel: document.getElementById('reveal-label'),
+            revealWord: document.getElementById('reveal-word'),
+            hiddenContent: document.getElementById('hidden-content'),
+            revealedContent: document.getElementById('revealed-content'),
+            apiStatus: document.getElementById('api-status'),
+            manualInput: document.getElementById('manual-input')
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadApiKey();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            // Radio options
+            document.querySelectorAll('.radio-option').forEach(option => {
+                option.addEventListener('click', (e) => {
+                    document.querySelectorAll('.radio-option').forEach(o => o.classList.remove('selected'));
+                    option.classList.add('selected');
+                    option.querySelector('input').checked = true;
+
+                    // Show/hide manual input
+                    const method = option.querySelector('input').value;
+                    elements.manualInput.style.display = method === 'manual' ? 'block' : 'none';
+                });
+            });
+
+            // Collapsible API settings
+            document.getElementById('api-header').addEventListener('click', () => {
+                document.getElementById('api-header').classList.toggle('open');
+                document.getElementById('api-content').classList.toggle('open');
+            });
+
+            // API Key buttons
+            document.getElementById('save-api-btn').addEventListener('click', saveApiKey);
+            document.getElementById('clear-api-btn').addEventListener('click', clearApiKey);
+
+            // Game buttons
+            elements.startGameBtn.addEventListener('click', startGame);
+            document.getElementById('ready-btn').addEventListener('click', showRevealScreen);
+            document.getElementById('show-btn').addEventListener('click', revealRole);
+            document.getElementById('hide-pass-btn').addEventListener('click', hideAndPass);
+            document.getElementById('new-game-btn').addEventListener('click', resetGame);
+        }
+
+        // Screen Management
+        function showScreen(screenName) {
+            Object.values(screens).forEach(s => s.classList.remove('active'));
+            screens[screenName].classList.add('active');
+            gameState.gamePhase = screenName;
+        }
+
+        // Error Management
+        function showError(message) {
+            elements.errorConfig.textContent = message;
+            elements.errorConfig.classList.add('show');
+        }
+
+        function hideError() {
+            elements.errorConfig.classList.remove('show');
+        }
+
+        // LocalStorage Functions
+        function saveApiKey() {
+            const key = elements.apiKey.value.trim();
+            if (key) {
+                localStorage.setItem('openai_api_key', key);
+                updateApiStatus(true);
+            }
+        }
+
+        function loadApiKey() {
+            const key = localStorage.getItem('openai_api_key');
+            if (key) {
+                elements.apiKey.value = key;
+                updateApiStatus(true);
+            }
+        }
+
+        function clearApiKey() {
+            localStorage.removeItem('openai_api_key');
+            elements.apiKey.value = '';
+            updateApiStatus(false);
+        }
+
+        function updateApiStatus(saved) {
+            const dot = elements.apiStatus.querySelector('.dot');
+            const text = elements.apiStatus.querySelector('span:last-child');
+
+            if (saved) {
+                dot.className = 'dot saved';
+                text.textContent = 'API key saved';
+            } else {
+                dot.className = 'dot not-saved';
+                text.textContent = 'No API key saved';
+            }
+        }
+
+        // OpenAI Integration
+        async function generateWordWithAI() {
+            const apiKey = elements.apiKey.value.trim() || localStorage.getItem('openai_api_key');
+
+            if (!apiKey) {
+                throw new Error('Please enter or save an OpenAI API key');
+            }
+
+            const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`
+                },
+                body: JSON.stringify({
+                    model: 'gpt-3.5-turbo',
+                    messages: [
+                        {
+                            role: 'system',
+                            content: 'You are a word generator for a party game. Generate a single common noun that would be good for a word guessing game. The word should be something most people would know. Respond with ONLY the word, nothing else.'
+                        },
+                        {
+                            role: 'user',
+                            content: 'Generate a random word for our game.'
+                        }
+                    ],
+                    max_tokens: 20,
+                    temperature: 1.0
+                })
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error?.message || 'Failed to generate word');
+            }
+
+            const data = await response.json();
+            return data.choices[0].message.content.trim().toLowerCase();
+        }
+
+        // Game Logic
+        function selectImposters(playerCount, imposterCount) {
+            const indices = [];
+            const available = Array.from({ length: playerCount }, (_, i) => i + 1);
+
+            for (let i = 0; i < imposterCount; i++) {
+                const randomIndex = Math.floor(Math.random() * available.length);
+                indices.push(available[randomIndex]);
+                available.splice(randomIndex, 1);
+            }
+
+            return indices;
+        }
+
+        async function startGame() {
+            hideError();
+
+            // Validate inputs
+            const playerCount = parseInt(elements.playerCount.value);
+            const imposterCount = parseInt(elements.imposterCount.value);
+
+            if (isNaN(playerCount) || playerCount < 3) {
+                showError('Please enter at least 3 players');
+                return;
+            }
+
+            if (isNaN(imposterCount) || imposterCount < 1) {
+                showError('Please enter at least 1 imposter');
+                return;
+            }
+
+            if (imposterCount >= playerCount) {
+                showError('Number of imposters must be less than total players');
+                return;
+            }
+
+            // Get word based on method
+            const wordMethod = document.querySelector('input[name="word-method"]:checked').value;
+            let word = '';
+
+            if (wordMethod === 'manual') {
+                word = elements.secretWord.value.trim();
+                if (!word) {
+                    showError('Please enter a secret word');
+                    return;
+                }
+            } else {
+                // AI generation
+                try {
+                    elements.loadingConfig.classList.add('show');
+                    elements.startGameBtn.disabled = true;
+                    word = await generateWordWithAI();
+                } catch (error) {
+                    showError(error.message);
+                    elements.loadingConfig.classList.remove('show');
+                    elements.startGameBtn.disabled = false;
+                    return;
+                } finally {
+                    elements.loadingConfig.classList.remove('show');
+                    elements.startGameBtn.disabled = false;
+                }
+            }
+
+            // Initialize game state
+            gameState.totalPlayers = playerCount;
+            gameState.totalImposters = imposterCount;
+            gameState.secretWord = word;
+            gameState.imposterIndices = selectImposters(playerCount, imposterCount);
+            gameState.currentPlayer = 1;
+
+            // Show handoff screen
+            showHandoffScreen(1);
+        }
+
+        function showHandoffScreen(playerNum) {
+            elements.handoffPlayer.textContent = `Player #${playerNum}`;
+            showScreen('handoff');
+        }
+
+        function showRevealScreen() {
+            elements.revealPlayer.textContent = `Player #${gameState.currentPlayer}`;
+            elements.hiddenContent.style.display = 'flex';
+            elements.revealedContent.style.display = 'none';
+            showScreen('reveal');
+        }
+
+        function revealRole() {
+            const isImposter = gameState.imposterIndices.includes(gameState.currentPlayer);
+
+            elements.hiddenContent.style.display = 'none';
+            elements.revealedContent.style.display = 'block';
+
+            if (isImposter) {
+                elements.revealCard.className = 'reveal-card imposter';
+                elements.revealLabel.textContent = 'You are the';
+                elements.revealWord.textContent = 'IMPOSTER';
+            } else {
+                elements.revealCard.className = 'reveal-card word';
+                elements.revealLabel.textContent = 'Your word is:';
+                elements.revealWord.textContent = gameState.secretWord.toUpperCase();
+            }
+        }
+
+        function hideAndPass() {
+            gameState.currentPlayer++;
+
+            if (gameState.currentPlayer > gameState.totalPlayers) {
+                showScreen('ready');
+            } else {
+                showHandoffScreen(gameState.currentPlayer);
+            }
+        }
+
+        function resetGame() {
+            // Reset state
+            gameState.totalPlayers = 0;
+            gameState.totalImposters = 0;
+            gameState.secretWord = '';
+            gameState.imposterIndices = [];
+            gameState.currentPlayer = 0;
+
+            // Reset form
+            elements.secretWord.value = '';
+            hideError();
+
+            showScreen('config');
+        }
+    </script>
+</body>
+</html>
