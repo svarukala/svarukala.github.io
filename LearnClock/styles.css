@@ -197,6 +197,12 @@ main {
     color: #667eea;
 }
 
+.version {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    margin-top: 10px;
+}
+
 @media (max-width: 480px) {
     .container {
         padding: 20px;
