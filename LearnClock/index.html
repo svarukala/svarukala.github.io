@@ -3,79 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clock Face</title>
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0;
-        }
-        .clock {
-            position: relative;
-            width: 300px;
-            height: 300px;
-            border: 10px solid #333;
-            border-radius: 50%;
-            background: white;
-        }
-        .hand {
-            position: absolute;
-            width: 50%;
-            height: 6px;
-            background: #333;
-            top: 50%;
-            transform-origin: 100%;
-            transform: translateY(-50%);
-        }
-        .hour-hand {
-            height: 8px;
-        }
-        .minute-hand {
-            height: 4px;
-        }
-        .hour {
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transform: translate(-50%, -50%);
-        }
-        .hour:nth-child(1) { top: 10%; left: 50%; }
-        .hour:nth-child(2) { top: 20%; left: 80%; }
-        .hour:nth-child(3) { top: 50%; left: 90%; }
-        .hour:nth-child(4) { top: 80%; left: 80%; }
-        .hour:nth-child(5) { top: 90%; left: 50%; }
-        .hour:nth-child(6) { top: 80%; left: 20%; }
-        .hour:nth-child(7) { top: 50%; left: 10%; }
-        .hour:nth-child(8) { top: 20%; left: 20%; }
-        .hour:nth-child(9) { top: 10%; left: 50%; }
-        .hour:nth-child(10) { top: 20%; left: 80%; }
-        .hour:nth-child(11) { top: 50%; left: 90%; }
-        .hour:nth-child(12) { top: 80%; left: 80%; }
-    </style>
+    <title>Learn to Read Clocks</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="clock">
-        <div class="hand hour-hand" style="transform: rotate(90deg);"></div>
-        <div class="hand minute-hand" style="transform: rotate(180deg);"></div>
-        <div class="hour" style="top: 10%; left: 50%;">12</div>
-        <div class="hour" style="top: 20%; left: 80%;">1</div>
-        <div class="hour" style="top: 50%; left: 90%;">2</div>
-        <div class="hour" style="top: 80%; left: 80%;">3</div>
-        <div class="hour" style="top: 90%; left: 50%;">4</div>
-        <div class="hour" style="top: 80%; left: 20%;">5</div>
-        <div class="hour" style="top: 50%; left: 10%;">6</div>
-        <div class="hour" style="top: 20%; left: 20%;">7</div>
-        <div class="hour" style="top: 10%; left: 50%;">8</div>
-        <div class="hour" style="top: 20%; left: 80%;">9</div>
-        <div class="hour" style="top: 50%; left: 90%;">10</div>
-        <div class="hour" style="top: 80%; left: 80%;">11</div>
-        <div class="hour" style="top: 50%; left: 50%;">12</div>
+    <div class="container">
+        <header>
+            <h1>Learn to Read Clocks</h1>
+            <div class="mode-selector">
+                <button class="mode-btn active" data-mode="easy">Easy</button>
+                <button class="mode-btn" data-mode="medium">Medium</button>
+                <button class="mode-btn" data-mode="hard">Hard</button>
+            </div>
+        </header>
+
+        <main>
+            <div class="clock-container">
+                <canvas id="clock" width="300" height="300"></canvas>
+            </div>
+
+            <div class="answers-container">
+                <button class="answer-btn" data-index="0"></button>
+                <button class="answer-btn" data-index="1"></button>
+                <button class="answer-btn" data-index="2"></button>
+                <button class="answer-btn" data-index="3"></button>
+            </div>
+
+            <div class="controls">
+                <button id="next-btn" disabled>Next</button>
+            </div>
+
+            <div class="score-display">
+                <span>Score: <span id="correct">0</span> / <span id="total">0</span></span>
+            </div>
+        </main>
     </div>
+
+    <script src="clock.js"></script>
 </body>
 </html>

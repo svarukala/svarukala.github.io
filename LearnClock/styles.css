@@ -1,0 +1,223 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Comic Sans MS', 'Chalkboard', 'Comic Neue', cursive, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    background: white;
+    border-radius: 30px;
+    padding: 30px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 500px;
+    width: 100%;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+h1 {
+    color: #333;
+    font-size: 2rem;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.mode-selector {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.mode-btn {
+    padding: 12px 24px;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    font-weight: bold;
+}
+
+.mode-btn[data-mode="easy"] {
+    background: #4ade80;
+    color: white;
+}
+
+.mode-btn[data-mode="medium"] {
+    background: #fbbf24;
+    color: white;
+}
+
+.mode-btn[data-mode="hard"] {
+    background: #f87171;
+    color: white;
+}
+
+.mode-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+}
+
+.mode-btn.active {
+    transform: scale(1.1);
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+}
+
+.clock-container {
+    background: #f8fafc;
+    border-radius: 50%;
+    padding: 20px;
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.1),
+        inset 0 -5px 15px rgba(0, 0, 0, 0.05);
+}
+
+#clock {
+    display: block;
+}
+
+.answers-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    width: 100%;
+    max-width: 350px;
+}
+
+.answer-btn {
+    padding: 18px 20px;
+    font-size: 1.3rem;
+    border: 3px solid #e2e8f0;
+    border-radius: 15px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    font-weight: bold;
+    color: #334155;
+}
+
+.answer-btn:hover:not(:disabled) {
+    border-color: #667eea;
+    background: #f0f4ff;
+    transform: scale(1.02);
+}
+
+.answer-btn:disabled {
+    cursor: not-allowed;
+}
+
+.answer-btn.correct {
+    background: #4ade80;
+    border-color: #22c55e;
+    color: white;
+    animation: pulse 0.5s ease;
+}
+
+.answer-btn.incorrect {
+    background: #f87171;
+    border-color: #ef4444;
+    color: white;
+    animation: shake 0.5s ease;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-5px); }
+    40%, 80% { transform: translateX(5px); }
+}
+
+.controls {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+#next-btn {
+    padding: 15px 50px;
+    font-size: 1.2rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    font-weight: bold;
+}
+
+#next-btn:hover:not(:disabled) {
+    transform: scale(1.05);
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+}
+
+#next-btn:disabled {
+    background: #cbd5e1;
+    cursor: not-allowed;
+}
+
+.score-display {
+    font-size: 1.2rem;
+    color: #64748b;
+    font-weight: bold;
+}
+
+.score-display #correct {
+    color: #22c55e;
+}
+
+.score-display #total {
+    color: #667eea;
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    .mode-btn {
+        padding: 10px 18px;
+        font-size: 1rem;
+    }
+
+    #clock {
+        width: 250px;
+        height: 250px;
+    }
+
+    .answer-btn {
+        padding: 15px;
+        font-size: 1.1rem;
+    }
+}
