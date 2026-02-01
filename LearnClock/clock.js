@@ -285,6 +285,25 @@ function drawNumbers(cx, cy, radius, mode) {
         const y = cy + Math.sin(angle) * (radius - 35);
         ctx.fillText(num.toString(), x, y);
     });
+
+    // Show minute values subtly beside hour numbers
+    if (mode === 'easy' || mode === 'medium') {
+        ctx.font = '12px Arial';
+        ctx.fillStyle = '#94a3b8';
+
+        const hoursToLabel = mode === 'easy'
+            ? [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+            : [12, 3, 6, 9];
+
+        hoursToLabel.forEach(hour => {
+            const minutes = (hour * 5) % 60;
+            const minuteStr = minutes.toString().padStart(2, '0');
+            const angle = (hour - 3) * (Math.PI / 6);
+            const x = cx + Math.cos(angle) * (radius - 58);
+            const y = cy + Math.sin(angle) * (radius - 58);
+            ctx.fillText(minuteStr, x, y);
+        });
+    }
 }
 
 function drawTickMarks(cx, cy, radius, mode) {
