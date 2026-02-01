@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poker Split - Connection Test</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a472a 0%, #2d5a3f 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            color: #333;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        .card h2 {
+            color: #1a472a;
+            margin-bottom: 15px;
+        }
+
+        #connection-result {
+            font-family: monospace;
+            line-height: 1.8;
+        }
+
+        #connection-result code {
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        #connection-result pre {
+            background: #f0f0f0;
+            padding: 10px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+
+        #connection-result ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        button {
+            background: #1a472a;
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        button:hover {
+            background: #2d5a3f;
+        }
+
+        .checklist {
+            list-style: none;
+            margin-top: 15px;
+        }
+
+        .checklist li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .checklist li:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Poker Split</h1>
+            <p>Supabase Connection Test</p>
+        </header>
+
+        <section class="card">
+            <h2>Setup Checklist</h2>
+            <ul class="checklist">
+                <li>1. Create Supabase project at supabase.com</li>
+                <li>2. Copy <code>.env.example</code> to <code>.env.local</code></li>
+                <li>3. Add your Supabase URL and anon key to <code>.env.local</code></li>
+                <li>4. Run <code>supabase-schema.sql</code> in Supabase SQL Editor</li>
+                <li>5. Run <code>npm install</code></li>
+                <li>6. Run <code>npm run dev</code></li>
+                <li>7. Open this page to test connection</li>
+            </ul>
+        </section>
+
+        <section class="card">
+            <h2>Connection Status</h2>
+            <div id="connection-result">
+                <p>Loading...</p>
+            </div>
+            <button onclick="runConnectionTest()">Test Again</button>
+        </section>
+    </div>
+
+    <script type="module" src="/js/connection-test.js"></script>
+</body>
+</html>
