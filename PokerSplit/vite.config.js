@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite';
+import { resolve } from 'path';
 
 export default defineConfig({
     // Development server settings
@@ -10,7 +11,13 @@ export default defineConfig({
     // Build settings
     build: {
         outDir: 'dist',
-        sourcemap: true
+        sourcemap: true,
+        rollupOptions: {
+            input: {
+                main: resolve(__dirname, 'index.html'),
+                resources: resolve(__dirname, 'resources.html')
+            }
+        }
     },
 
     // Resolve settings

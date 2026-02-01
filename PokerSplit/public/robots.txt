@@ -1,0 +1,7 @@
+# robots.txt for PokerSplit
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://pokersplit.org/sitemap.xml

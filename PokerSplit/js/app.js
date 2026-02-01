@@ -6,6 +6,7 @@ import {
     addPlayer as addPlayerToDb,
     updatePlayerBuyIns,
     updatePlayerWins,
+    cashOutPlayer,
     subscribeToGame,
     submitFeedback
 } from './supabase.js';
@@ -34,7 +35,8 @@ let appState = {
     game: null,
     players: [],
     isDealer: false,
-    subscription: null
+    subscription: null,
+    cashOutPlayerId: null
 };
 
 // ============================================
@@ -350,16 +352,39 @@ function renderGameView() {
 
     players.forEach((player, index) => {
         const invested = player.buy_ins * game.buy_in_amount;
+        const isCashedOut = player.cashed_out;
         const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${player.name}</td>
-            <td>${player.buy_ins}</td>
-            <td>${formatCurrency(invested)}</td>
-            <td class="dealer-only ${isDealerMode ? '' : 'hidden'}">
-                <button class="small" onclick="window.addBuyIn('${player.id}', ${player.buy_ins})">+ Add</button>
-                <button class="small secondary" onclick="window.removeBuyIn('${player.id}', ${player.buy_ins})" ${player.buy_ins <= 1 ? 'disabled' : ''}>- Remove</button>
-            </td>
-        `;
+
+        if (isCashedOut) {
+            row.className = 'player-cashed-out';
+        }
+
+        if (isCashedOut) {
+            // Cashed out player - show badge, no controls
+            row.innerHTML = `
+                <td>
+                    ${player.name}
+                    <span class="cashed-out-badge">Cashed Out: ${formatCurrency(player.wins)}</span>
+                </td>
+                <td>${player.buy_ins}</td>
+                <td>${formatCurrency(invested)}</td>
+                <td class="dealer-only ${isDealerMode ? '' : 'hidden'}"></td>
+            `;
+        } else {
+            // Active player - show controls
+            row.innerHTML = `
+                <td>${player.name}</td>
+                <td>${player.buy_ins}</td>
+                <td>${formatCurrency(invested)}</td>
+                <td class="dealer-only ${isDealerMode ? '' : 'hidden'}">
+                    <div class="stepper">
+                        <button class="stepper-btn minus" onclick="window.removeBuyIn('${player.id}', ${player.buy_ins})" ${player.buy_ins <= 1 ? 'disabled' : ''} title="Remove buy-in">−</button>
+                        <button class="stepper-btn plus" onclick="window.addBuyIn('${player.id}', ${player.buy_ins})" title="Add buy-in">+</button>
+                    </div>
+                    <button class="btn-cashout" onclick="window.openCashOut('${player.id}')" title="Cash out player">Cash Out</button>
+                </td>
+            `;
+        }
         tbody.appendChild(row);
     });
 
@@ -421,6 +446,71 @@ window.copyGameCode = async function() {
         }, 2000);
     } else {
         showToast('Failed to copy code', 'error');
+    }
+};
+
+// Cash Out Modal Functions
+window.openCashOut = function(playerId) {
+    const player = appState.players.find(p => p.id === playerId);
+    if (!player) return;
+
+    appState.cashOutPlayerId = playerId;
+    const invested = player.buy_ins * appState.game.buy_in_amount;
+
+    document.getElementById('cashout-player-name').textContent = player.name;
+    document.getElementById('cashout-invested').textContent = formatCurrency(invested);
+    document.getElementById('cashout-amount').value = '';
+    document.getElementById('cashout-modal').classList.remove('hidden');
+    document.getElementById('cashout-amount').focus();
+};
+
+window.closeCashOut = function() {
+    document.getElementById('cashout-modal').classList.add('hidden');
+    appState.cashOutPlayerId = null;
+};
+
+window.closeCashOutOnOverlay = function(event) {
+    if (event.target.id === 'cashout-modal') {
+        window.closeCashOut();
+    }
+};
+
+window.confirmCashOut = async function() {
+    const playerId = appState.cashOutPlayerId;
+    if (!playerId) return;
+
+    const amountInput = document.getElementById('cashout-amount');
+    const amount = parseFloat(amountInput.value);
+
+    if (isNaN(amount) || amount < 0) {
+        showToast('Please enter a valid amount', 'error');
+        return;
+    }
+
+    const player = appState.players.find(p => p.id === playerId);
+    if (!player) return;
+
+    const btn = document.getElementById('btn-confirm-cashout');
+    const originalText = btn.textContent;
+    btn.disabled = true;
+    btn.classList.add('loading');
+
+    try {
+        const { error } = await cashOutPlayer(playerId, amount);
+
+        if (error) {
+            showToast('Failed to cash out player: ' + error.message, 'error');
+            return;
+        }
+
+        showToast(`${player.name} cashed out with ${formatCurrency(amount)}`, 'success');
+        window.closeCashOut();
+    } catch (err) {
+        showToast('Error cashing out: ' + err.message, 'error');
+    } finally {
+        btn.disabled = false;
+        btn.classList.remove('loading');
+        btn.textContent = originalText;
     }
 };
 
@@ -513,9 +603,25 @@ function renderSettlementView(preserveFocus = false) {
 
     players.forEach((player) => {
         const invested = player.buy_ins * game.buy_in_amount;
+        const isCashedOut = player.cashed_out;
         const row = document.createElement('tr');
 
-        if (isDealerMode) {
+        if (isCashedOut) {
+            row.className = 'player-cashed-out';
+        }
+
+        if (isCashedOut) {
+            // Cashed out player - show locked wins (read-only for everyone)
+            row.innerHTML = `
+                <td>
+                    ${player.name}
+                    <span class="cashed-out-badge">Cashed Out</span>
+                </td>
+                <td>${formatCurrency(invested)}</td>
+                <td class="locked-wins">${formatCurrency(player.wins)}</td>
+            `;
+        } else if (isDealerMode) {
+            // Active player - dealer can edit
             // Get current input value if it exists (preserve user's typing)
             const existingInput = document.getElementById(`wins-${player.id}`);
             const currentValue = existingInput ? existingInput.value : (player.wins || '');
@@ -533,6 +639,7 @@ function renderSettlementView(preserveFocus = false) {
                 </td>
             `;
         } else {
+            // Active player - player view (read-only)
             row.innerHTML = `
                 <td>${player.name}</td>
                 <td>${formatCurrency(invested)}</td>
@@ -576,9 +683,15 @@ function updateEnteredTotal() {
 
     let total = 0;
     players.forEach(player => {
-        const input = document.getElementById(`wins-${player.id}`);
-        const value = input ? parseFloat(input.value) || 0 : (player.wins || 0);
-        total += value;
+        if (player.cashed_out) {
+            // Cashed out players - use their saved wins value
+            total += player.wins || 0;
+        } else {
+            // Active players - check input field first, then saved value
+            const input = document.getElementById(`wins-${player.id}`);
+            const value = input ? parseFloat(input.value) || 0 : (player.wins || 0);
+            total += value;
+        }
     });
 
     const enteredSpan = document.getElementById('entered-total');
@@ -593,15 +706,21 @@ window.calculateResults = async function() {
     const game = appState.game;
     const pot = calculatePot(players, game.buy_in_amount);
 
-    // Validate totals
+    // Validate totals and save wins
     let total = 0;
     for (const player of players) {
-        const input = document.getElementById(`wins-${player.id}`);
-        const value = parseFloat(input?.value) || 0;
-        total += value;
+        if (player.cashed_out) {
+            // Cashed out players - use their already saved wins
+            total += player.wins || 0;
+        } else {
+            // Active players - get from input and save
+            const input = document.getElementById(`wins-${player.id}`);
+            const value = parseFloat(input?.value) || 0;
+            total += value;
 
-        // Save wins to database
-        await updatePlayerWins(player.id, value);
+            // Save wins to database
+            await updatePlayerWins(player.id, value);
+        }
     }
 
     const diff = Math.abs(total - pot);
@@ -686,11 +805,81 @@ window.newGame = function() {
         game: null,
         players: [],
         isDealer: false,
-        subscription: null
+        subscription: null,
+        cashOutPlayerId: null
     };
 
     clearGameCodeFromURL();
     showView('home');
+};
+
+// ============================================
+// SHARE RESULTS
+// ============================================
+
+window.shareResults = async function() {
+    if (!appState.game || !appState.players.length) {
+        showToast('No game data to share', 'error');
+        return;
+    }
+
+    const buyInAmount = appState.game.buy_in_amount;
+    const pot = calculatePot(appState.players, buyInAmount);
+    const { results, payments } = calculateSettlements(appState.players, buyInAmount);
+
+    // Build the share text
+    let shareText = `🃏 Poker Game Settled!\n\n`;
+    shareText += `💰 Total Pot: ${formatCurrency(pot)}\n`;
+    shareText += `👥 Players: ${appState.players.length}\n\n`;
+
+    // Player results summary
+    shareText += `📊 Results:\n`;
+    results.forEach(result => {
+        let netPrefix = '';
+        if (result.net > 0.01) {
+            netPrefix = '+';
+        }
+        shareText += `• ${result.name}: ${netPrefix}${formatCurrency(result.net)} (In: ${formatCurrency(result.invested)}, Out: ${formatCurrency(result.wins)})\n`;
+    });
+
+    // Payment instructions
+    if (payments.length > 0) {
+        shareText += `\n💸 Settle Up:\n`;
+        payments.forEach(payment => {
+            shareText += `• ${payment.from} → ${payment.to}: ${formatCurrency(payment.amount)}\n`;
+        });
+    } else {
+        shareText += `\n✅ Everyone broke even!\n`;
+    }
+
+    shareText += `\n──────────────\n`;
+    shareText += `Settle your poker games at:\n`;
+    shareText += `https://pokersplit.org`;
+
+    // Try Web Share API first (works great on mobile)
+    if (navigator.share) {
+        try {
+            await navigator.share({
+                title: 'Poker Game Settled - PokerSplit',
+                text: shareText
+            });
+            showToast('Shared successfully!');
+            return;
+        } catch (err) {
+            // User cancelled or share failed, fall through to clipboard
+            if (err.name === 'AbortError') {
+                return; // User cancelled
+            }
+        }
+    }
+
+    // Fallback: copy to clipboard
+    const success = await copyToClipboard(shareText);
+    if (success) {
+        showToast('Summary copied to clipboard!');
+    } else {
+        showToast('Failed to copy', 'error');
+    }
 };
 
 // ============================================

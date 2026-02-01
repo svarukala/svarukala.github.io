@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "WebSearch",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "WebFetch(domain:pokersplit.org)",
+      "Bash(claude mcp --help:*)"
     ]
   }
 }

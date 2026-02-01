@@ -187,6 +187,23 @@ export async function updatePlayerWins(playerId, wins) {
     return { error };
 }
 
+/**
+ * Cash out a player mid-game
+ * @param {string} playerId - The player UUID
+ * @param {number} wins - Final amount the player is leaving with
+ */
+export async function cashOutPlayer(playerId, wins) {
+    const { error } = await supabase
+        .from('players')
+        .update({ wins: wins, cashed_out: true })
+        .eq('id', playerId);
+
+    if (error) {
+        console.error('Error cashing out player:', error);
+    }
+    return { error };
+}
+
 // ============================================
 // REALTIME SUBSCRIPTIONS
 // ============================================

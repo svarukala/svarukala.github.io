@@ -25,11 +25,15 @@ CREATE TABLE players (
     name VARCHAR(100) NOT NULL,
     buy_ins INTEGER NOT NULL DEFAULT 1,
     wins DECIMAL(10, 2),
+    cashed_out BOOLEAN NOT NULL DEFAULT FALSE,
     position INTEGER NOT NULL DEFAULT 0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
 
     CONSTRAINT positive_buyins CHECK (buy_ins >= 1)
 );
+
+-- Migration for existing databases:
+-- ALTER TABLE players ADD COLUMN cashed_out BOOLEAN NOT NULL DEFAULT FALSE;
 
 -- Indexes for performance
 CREATE INDEX idx_games_game_code ON games(game_code);
