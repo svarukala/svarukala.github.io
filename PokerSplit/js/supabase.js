@@ -281,6 +281,46 @@ export async function submitFeedback(feedback) {
 }
 
 /**
+ * Fetch game statistics (counts by phase)
+ * @returns {Object} - { active, completed, total, error }
+ */
+export async function fetchGameStats() {
+    try {
+        // Get active games (playing or settlement phase)
+        const { count: activeCount, error: activeError } = await supabase
+            .from('games')
+            .select('*', { count: 'exact', head: true })
+            .in('phase', ['playing', 'settlement']);
+
+        if (activeError) {
+            console.error('Error fetching active games:', activeError);
+            return { active: 0, completed: 0, total: 0, error: activeError };
+        }
+
+        // Get completed games
+        const { count: completedCount, error: completedError } = await supabase
+            .from('games')
+            .select('*', { count: 'exact', head: true })
+            .eq('phase', 'complete');
+
+        if (completedError) {
+            console.error('Error fetching completed games:', completedError);
+            return { active: 0, completed: 0, total: 0, error: completedError };
+        }
+
+        return {
+            active: activeCount || 0,
+            completed: completedCount || 0,
+            total: (activeCount || 0) + (completedCount || 0),
+            error: null
+        };
+    } catch (err) {
+        console.error('Error fetching game stats:', err);
+        return { active: 0, completed: 0, total: 0, error: err };
+    }
+}
+
+/**
  * Test the database connection
  * @returns {boolean} - True if connected successfully
  */

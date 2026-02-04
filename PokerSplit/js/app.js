@@ -8,7 +8,8 @@ import {
     updatePlayerWins,
     cashOutPlayer,
     subscribeToGame,
-    submitFeedback
+    submitFeedback,
+    fetchGameStats
 } from './supabase.js';
 
 import {
@@ -87,6 +88,35 @@ function initHomeView() {
             document.getElementById('btn-join-game').click();
         }
     });
+
+    // Load game stats
+    loadGameStats();
+}
+
+async function loadGameStats() {
+    const statsContainer = document.getElementById('game-stats');
+    if (!statsContainer) return;
+
+    try {
+        const { active, completed, total, error } = await fetchGameStats();
+
+        if (error) {
+            statsContainer.classList.add('hidden');
+            return;
+        }
+
+        // Update the display
+        document.getElementById('stat-active').textContent = active.toLocaleString();
+        document.getElementById('stat-completed').textContent = completed.toLocaleString();
+        document.getElementById('stat-total').textContent = total.toLocaleString();
+
+        // Show the stats with animation
+        statsContainer.classList.remove('hidden');
+        statsContainer.classList.add('stats-visible');
+    } catch (err) {
+        console.error('Failed to load game stats:', err);
+        statsContainer.classList.add('hidden');
+    }
 }
 
 // ============================================

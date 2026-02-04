@@ -864,6 +864,83 @@
         }
 
         /* Home View Styles */
+        .game-stats {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, #1a472a 0%, #2d5a3f 100%);
+            border-radius: 12px;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .game-stats.stats-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            text-align: center;
+            width: 100%;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.8);
+            margin-top: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .stat-divider {
+            width: 1px;
+            height: 50px;
+            background: rgba(255,255,255,0.3);
+        }
+
+        @media (max-width: 600px) {
+            .game-stats {
+                gap: 10px;
+                padding: 15px 10px;
+            }
+
+            .stat-item {
+                padding: 8px 12px;
+            }
+
+            .stat-number {
+                font-size: 1.6rem;
+            }
+
+            .stat-label {
+                font-size: 0.7rem;
+            }
+
+            .stat-divider {
+                height: 40px;
+            }
+        }
+
         .home-options {
             display: grid;
             gap: 20px;
@@ -1015,6 +1092,25 @@
         <!-- HOME VIEW -->
         <section id="home-view" class="card">
             <h2>Welcome</h2>
+
+            <!-- Game Stats Counter -->
+            <div id="game-stats" class="game-stats hidden">
+                <div class="stat-item">
+                    <span class="stat-number" id="stat-active">0</span>
+                    <span class="stat-label">Active Games</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <span class="stat-number" id="stat-completed">0</span>
+                    <span class="stat-label">Games Settled</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <span class="stat-number" id="stat-total">0</span>
+                    <span class="stat-label">Total Games</span>
+                </div>
+            </div>
+
             <div class="home-options">
                 <div class="option-card">
                     <h3>Start a New Game</h3>
