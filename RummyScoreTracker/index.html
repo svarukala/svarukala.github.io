@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rummy Score Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app-container">
+        <!-- Header -->
+        <header id="app-header">
+            <div class="header-left">
+                <button id="home-btn" class="icon-btn" title="New Game">&#127183;</button>
+                <h1>Rummy Score Tracker</h1>
+            </div>
+        </header>
+
+        <!-- Configuration Screen -->
+        <div id="config-screen" class="screen active">
+            <div class="card">
+                <h2>Game Configuration</h2>
+
+                <div class="config-grid">
+                    <div class="form-group">
+                        <label for="drop-count">Drop Count</label>
+                        <input type="number" id="drop-count" value="25" min="1">
+                        <span class="hint">Points for early drop</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="middle-drop-count">Middle Drop Count</label>
+                        <input type="number" id="middle-drop-count" value="40" min="1">
+                        <span class="hint">Points for mid-game drop</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="full-count">Full Count</label>
+                        <input type="number" id="full-count" value="80" min="1">
+                        <span class="hint">Points for losing without declaration</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="game-count">Game Count (Elimination)</label>
+                        <input type="number" id="game-count" value="101" min="1">
+                        <span class="hint">Total points for elimination</span>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button id="btn-start-game" class="game-btn primary">Start Game</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Score Tracker Screen -->
+        <div id="tracker-screen" class="screen hidden">
+            <div class="card">
+                <div class="tracker-header">
+                    <h2>Score Tracker</h2>
+                    <div class="config-display">
+                        <span class="config-badge">Drop: <strong id="display-drop">25</strong></span>
+                        <span class="config-badge">Mid: <strong id="display-mid">40</strong></span>
+                        <span class="config-badge">Full: <strong id="display-full">80</strong></span>
+                        <span class="config-badge">Out: <strong id="display-out">101</strong></span>
+                    </div>
+                </div>
+
+                <!-- Add Player Form -->
+                <div class="add-player-form">
+                    <input type="text" id="new-player-name" placeholder="Enter player name" maxlength="20">
+                    <button id="btn-add-player" class="game-btn">+ Add Player</button>
+                </div>
+
+                <!-- Score Table -->
+                <div class="table-container">
+                    <table id="score-table">
+                        <thead>
+                            <tr id="table-header">
+                                <th class="player-col">Player</th>
+                                <!-- Round columns added dynamically -->
+                                <th class="total-col">Total</th>
+                                <th class="status-col">Status</th>
+                                <th class="action-col"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body">
+                            <!-- Player rows added dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="btn-group tracker-actions">
+                    <button id="btn-undo" class="game-btn undo" disabled title="Undo (Ctrl+Z)">&#8630; Undo</button>
+                    <button id="btn-add-round" class="game-btn primary">+ New Round</button>
+                    <button id="btn-new-game" class="game-btn secondary">New Game</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Score Entry Modal -->
+        <div id="score-modal" class="modal-overlay hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Enter Score</h3>
+                    <button class="modal-close" id="btn-close-modal">&times;</button>
+                </div>
+                <p class="modal-subtitle">
+                    <span id="modal-player-name">Player</span> - Round <span id="modal-round-num">1</span>
+                </p>
+
+                <div class="score-options">
+                    <button class="score-option winner" data-score="winner">
+                        Winner (0)
+                    </button>
+                    <button class="score-option drop" data-score="drop">
+                        Drop (<span class="drop-value">25</span>)
+                    </button>
+                    <button class="score-option middle-drop" data-score="middleDrop">
+                        Middle Drop (<span class="middle-drop-value">40</span>)
+                    </button>
+                    <button class="score-option full" data-score="full">
+                        Full (<span class="full-value">80</span>)
+                    </button>
+                </div>
+
+                <div class="custom-score-group">
+                    <label for="custom-score">Custom Points:</label>
+                    <input type="number" id="custom-score" min="0" max="999" placeholder="0">
+                    <button id="btn-apply-custom" class="game-btn">Apply</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Winner Celebration Modal -->
+        <div id="winner-modal" class="modal-overlay hidden">
+            <div class="modal-content celebration">
+                <div class="confetti-container" id="confetti-container"></div>
+                <h2 class="winner-title">We Have a Winner!</h2>
+                <div class="winner-name" id="winner-name">Player Name</div>
+                <div class="winner-trophy">&#127942;</div>
+
+                <div class="final-standings">
+                    <h3>Final Standings</h3>
+                    <ol id="final-standings-list">
+                        <!-- Final standings added dynamically -->
+                    </ol>
+                </div>
+
+                <div class="btn-group">
+                    <button id="btn-play-again" class="game-btn primary">Play Again</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notification -->
+        <div id="toast" class="toast">
+            <span id="toast-message">Message</span>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
