@@ -14,7 +14,8 @@ let gameState = {
     },
     players: [],
     currentRound: 0,
-    currentScreen: 'config'
+    currentScreen: 'config',
+    winner: null  // Stores winner player ID when game ends
 };
 
 // Modal state
@@ -51,6 +52,8 @@ function initEventListeners() {
     document.getElementById('btn-add-round').addEventListener('click', addRound);
     document.getElementById('btn-new-game').addEventListener('click', confirmNewGame);
     document.getElementById('btn-undo').addEventListener('click', undo);
+    document.getElementById('btn-share').addEventListener('click', shareResults);
+    document.getElementById('btn-play-again').addEventListener('click', playAgain);
 
     // Keyboard shortcut for undo (Ctrl+Z)
     document.addEventListener('keydown', (e) => {
@@ -71,15 +74,6 @@ function initEventListeners() {
     document.getElementById('btn-apply-custom').addEventListener('click', applyCustomScore);
     document.getElementById('custom-score').addEventListener('keypress', (e) => {
         if (e.key === 'Enter') applyCustomScore();
-    });
-
-    // Winner modal
-    document.getElementById('winner-modal').addEventListener('click', (e) => {
-        if (e.target.id === 'winner-modal') closeWinnerModal();
-    });
-    document.getElementById('btn-play-again').addEventListener('click', () => {
-        closeWinnerModal();
-        playAgain();
     });
 
     // Config inputs - save on change
@@ -183,6 +177,7 @@ function renderScreen() {
         updateConfigDisplay();
         updateModalValues();
         renderTable();
+        updateShareButton();
     }
 }
 
@@ -214,6 +209,7 @@ function createPlayer(name) {
 function resetGame() {
     gameState.players = [];
     gameState.currentRound = 0;
+    gameState.winner = null;
     clearUndoHistory();
     showScreen('config');
     saveState();
@@ -227,9 +223,11 @@ function playAgain() {
         player.status = 'active';
     });
     gameState.currentRound = 0;
+    gameState.winner = null;
     clearUndoHistory();
     saveState();
     renderTable();
+    updateShareButton();
     showToast('New game started with same players!', 'success');
 }
 
@@ -513,7 +511,9 @@ function renderTableBody() {
 
     gameState.players.forEach(player => {
         const isEliminated = player.status === 'eliminated';
-        const rowClass = isEliminated ? 'player-eliminated' : '';
+        const isWinner = gameState.winner === player.id;
+        let rowClass = isEliminated ? 'player-eliminated' : '';
+        if (isWinner) rowClass += ' player-winner';
 
         html += `<tr class="${rowClass}" data-player-id="${player.id}">`;
 
@@ -573,53 +573,99 @@ function checkGameOver() {
     if (activePlayers.length === 1 && gameState.players.length > 1) {
         // We have a winner!
         const winner = activePlayers[0];
-        showWinnerModal(winner);
+        gameState.winner = winner.id;
+        saveState();
+        renderTable();
+        showToast(`🏆 ${winner.name} wins the game!`, 'success');
+        updateShareButton();
     } else if (activePlayers.length === 0 && gameState.players.length > 0) {
         // All players eliminated (rare edge case)
         showToast('All players eliminated!', 'info');
+        gameState.winner = null;
+        updateShareButton();
+    } else {
+        // Game still in progress
+        if (gameState.winner) {
+            gameState.winner = null;
+            updateShareButton();
+        }
     }
 }
 
-function showWinnerModal(winner) {
-    document.getElementById('winner-name').textContent = winner.name;
-
-    // Generate final standings
-    const standings = [...gameState.players]
-        .sort((a, b) => a.total - b.total);
-
-    const standingsList = document.getElementById('final-standings-list');
-    standingsList.innerHTML = standings.map((player, index) => `
-        <li>
-            <span class="standing-name">${index + 1}. ${escapeHtml(player.name)}</span>
-            <span class="standing-score">${player.total} pts</span>
-        </li>
-    `).join('');
-
-    // Create confetti
-    createConfetti();
-
-    document.getElementById('winner-modal').classList.remove('hidden');
+function updateShareButton() {
+    const shareBtn = document.getElementById('btn-share');
+    const playAgainBtn = document.getElementById('btn-play-again');
+    if (shareBtn) {
+        shareBtn.classList.toggle('hidden', !gameState.winner);
+    }
+    if (playAgainBtn) {
+        playAgainBtn.classList.toggle('hidden', !gameState.winner);
+    }
 }
 
-function closeWinnerModal() {
-    document.getElementById('winner-modal').classList.add('hidden');
-    document.getElementById('confetti-container').innerHTML = '';
+// ============================================
+// Share Functionality
+// ============================================
+function getGameSummary() {
+    const standings = [...gameState.players].sort((a, b) => a.total - b.total);
+    const winner = gameState.players.find(p => p.id === gameState.winner);
+
+    let summary = `🎴 Rummy Score Tracker\n`;
+    summary += `━━━━━━━━━━━━━━━━━━━━━\n\n`;
+
+    if (winner) {
+        summary += `🏆 Winner: ${winner.name}!\n\n`;
+    }
+
+    summary += `📊 Final Standings:\n`;
+    standings.forEach((player, index) => {
+        const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '  ';
+        const status = player.status === 'eliminated' ? ' (Out)' : '';
+        summary += `${medal} ${index + 1}. ${player.name}: ${player.total} pts${status}\n`;
+    });
+
+    summary += `\n📈 Rounds Played: ${gameState.currentRound}\n`;
+    summary += `⚙️ Settings: Drop ${gameState.config.dropCount} | Mid ${gameState.config.middleDropCount} | Full ${gameState.config.fullCount} | Out ${gameState.config.gameCount}\n`;
+    summary += `\n🔗 Play Rummy Score Tracker:\nhttps://rummy-score-tracker-xi.vercel.app/`;
+
+    return summary;
 }
 
-function createConfetti() {
-    const container = document.getElementById('confetti-container');
-    container.innerHTML = '';
+async function shareResults() {
+    const summary = getGameSummary();
 
-    const colors = ['#FFD700', '#4CAF50', '#2196F3', '#FF9800', '#9C27B0', '#f44336'];
+    // Try Web Share API first (mobile-friendly)
+    if (navigator.share) {
+        try {
+            await navigator.share({
+                title: 'Rummy Score Tracker - Game Results',
+                text: summary
+            });
+            showToast('Shared successfully!', 'success');
+            return;
+        } catch (err) {
+            // User cancelled or share failed, fall back to clipboard
+            if (err.name !== 'AbortError') {
+                console.log('Share failed, copying to clipboard');
+            } else {
+                return; // User cancelled, don't show clipboard message
+            }
+        }
+    }
 
-    for (let i = 0; i < 50; i++) {
-        const confetti = document.createElement('div');
-        confetti.className = 'confetti';
-        confetti.style.left = Math.random() * 100 + '%';
-        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-        confetti.style.animationDelay = Math.random() * 2 + 's';
-        confetti.style.animationDuration = (2 + Math.random() * 2) + 's';
-        container.appendChild(confetti);
+    // Fallback: Copy to clipboard
+    try {
+        await navigator.clipboard.writeText(summary);
+        showToast('Results copied to clipboard!', 'success');
+    } catch (err) {
+        // Final fallback for older browsers
+        const textarea = document.createElement('textarea');
+        textarea.value = summary;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        showToast('Results copied to clipboard!', 'success');
     }
 }
 

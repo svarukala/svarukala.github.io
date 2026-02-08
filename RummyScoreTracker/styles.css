@@ -227,6 +227,24 @@ body {
     background: linear-gradient(135deg, var(--primary-blue-dark) 0%, #1565C0 100%);
 }
 
+.game-btn.share {
+    background: linear-gradient(135deg, var(--primary-purple) 0%, #7B1FA2 100%);
+    color: white;
+}
+
+.game-btn.share:hover {
+    background: linear-gradient(135deg, #7B1FA2 0%, #6A1B9A 100%);
+}
+
+.game-btn.play-again {
+    background: linear-gradient(135deg, #FFD700 0%, #FFA000 100%);
+    color: #333;
+}
+
+.game-btn.play-again:hover {
+    background: linear-gradient(135deg, #FFA000 0%, #FF8F00 100%);
+}
+
 .game-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
@@ -449,6 +467,34 @@ body {
     background: #eeeeee !important;
 }
 
+/* Winner player row */
+.player-winner {
+    background: linear-gradient(90deg, #fff9c4 0%, #fff59d 50%, #fff9c4 100%) !important;
+    animation: winner-glow 2s ease-in-out infinite;
+}
+
+.player-winner .player-name {
+    font-weight: 700;
+    color: var(--primary-green-dark);
+}
+
+.player-winner .player-name::before {
+    content: '🏆 ';
+}
+
+.player-winner:hover {
+    background: linear-gradient(90deg, #fff59d 0%, #ffee58 50%, #fff59d 100%) !important;
+}
+
+@keyframes winner-glow {
+    0%, 100% {
+        box-shadow: 0 0 5px rgba(255, 193, 7, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(255, 193, 7, 0.6);
+    }
+}
+
 /* Remove player button */
 .btn-remove-player {
     background: none;
@@ -634,108 +680,6 @@ body {
 }
 
 /* ============================================
-   Winner Celebration Modal
-   ============================================ */
-.modal-content.celebration {
-    text-align: center;
-    max-width: 450px;
-    position: relative;
-    overflow: hidden;
-}
-
-.winner-title {
-    color: var(--primary-green);
-    font-size: 1.8rem;
-    margin-bottom: 15px;
-}
-
-.winner-name {
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--primary-green-dark);
-    margin-bottom: 15px;
-}
-
-.winner-trophy {
-    font-size: 4rem;
-    margin-bottom: 20px;
-    animation: bounce 1s ease-in-out infinite;
-}
-
-@keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-15px); }
-}
-
-.final-standings {
-    background: var(--light-bg);
-    border-radius: 10px;
-    padding: 20px;
-    margin-bottom: 20px;
-    text-align: left;
-}
-
-.final-standings h3 {
-    color: var(--dark-text);
-    margin-bottom: 15px;
-    text-align: center;
-}
-
-.final-standings ol {
-    list-style-position: inside;
-    padding: 0;
-}
-
-.final-standings li {
-    padding: 8px 0;
-    border-bottom: 1px solid var(--border-color);
-    display: flex;
-    justify-content: space-between;
-}
-
-.final-standings li:last-child {
-    border-bottom: none;
-}
-
-.final-standings .standing-name {
-    font-weight: 600;
-}
-
-.final-standings .standing-score {
-    color: var(--light-text);
-}
-
-/* Confetti */
-.confetti-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    pointer-events: none;
-    overflow: hidden;
-}
-
-.confetti {
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    top: -10px;
-    animation: confettiFall 3s linear forwards;
-}
-
-@keyframes confettiFall {
-    0% {
-        transform: translateY(0) rotate(0deg);
-        opacity: 1;
-    }
-    100% {
-        transform: translateY(500px) rotate(720deg);
-        opacity: 0;
-    }
-}
-
-/* ============================================
    Toast Notification
    ============================================ */
 .toast {
@@ -871,17 +815,5 @@ body {
 
     .modal-content {
         padding: 20px;
-    }
-
-    .winner-title {
-        font-size: 1.5rem;
-    }
-
-    .winner-name {
-        font-size: 1.6rem;
-    }
-
-    .winner-trophy {
-        font-size: 3rem;
     }
 }

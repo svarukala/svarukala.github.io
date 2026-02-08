@@ -93,6 +93,8 @@
                 <div class="btn-group tracker-actions">
                     <button id="btn-undo" class="game-btn undo" disabled title="Undo (Ctrl+Z)">&#8630; Undo</button>
                     <button id="btn-add-round" class="game-btn primary">+ New Round</button>
+                    <button id="btn-share" class="game-btn share hidden" title="Share Results">&#128228; Share</button>
+                    <button id="btn-play-again" class="game-btn play-again hidden">&#127942; Play Again</button>
                     <button id="btn-new-game" class="game-btn secondary">New Game</button>
                 </div>
             </div>
@@ -128,27 +130,6 @@
                     <label for="custom-score">Custom Points:</label>
                     <input type="number" id="custom-score" min="0" max="999" placeholder="0">
                     <button id="btn-apply-custom" class="game-btn">Apply</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Winner Celebration Modal -->
-        <div id="winner-modal" class="modal-overlay hidden">
-            <div class="modal-content celebration">
-                <div class="confetti-container" id="confetti-container"></div>
-                <h2 class="winner-title">We Have a Winner!</h2>
-                <div class="winner-name" id="winner-name">Player Name</div>
-                <div class="winner-trophy">&#127942;</div>
-
-                <div class="final-standings">
-                    <h3>Final Standings</h3>
-                    <ol id="final-standings-list">
-                        <!-- Final standings added dynamically -->
-                    </ol>
-                </div>
-
-                <div class="btn-group">
-                    <button id="btn-play-again" class="game-btn primary">Play Again</button>
                 </div>
             </div>
         </div>
