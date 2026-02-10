@@ -286,22 +286,22 @@ export async function submitFeedback(feedback) {
  */
 export async function fetchGameStats() {
     try {
-        // Get active games (playing or settlement phase)
+        // Get active games (playing phase)
         const { count: activeCount, error: activeError } = await supabase
             .from('games')
             .select('*', { count: 'exact', head: true })
-            .in('phase', ['playing', 'settlement']);
+            .eq('phase', 'playing');
 
         if (activeError) {
             console.error('Error fetching active games:', activeError);
             return { active: 0, completed: 0, total: 0, error: activeError };
         }
 
-        // Get completed games
+        // Get completed/settled games
         const { count: completedCount, error: completedError } = await supabase
             .from('games')
             .select('*', { count: 'exact', head: true })
-            .eq('phase', 'complete');
+            .in('phase', ['complete', 'settlement']);
 
         if (completedError) {
             console.error('Error fetching completed games:', completedError);
