@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokerSplit Admin</title>
+    <meta name="robots" content="noindex, nofollow">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        .hidden { display: none; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a472a 0%, #2d5a3f 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+
+        /* ── Access Denied ── */
+        #access-denied {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 80vh;
+            gap: 16px;
+            text-align: center;
+        }
+
+        #access-denied .lock { font-size: 4rem; }
+
+        #access-denied h1 { font-size: 1.8rem; }
+
+        #access-denied p { opacity: 0.75; font-size: 1rem; }
+
+        /* ── Admin Shell ── */
+        #admin-shell { max-width: 1100px; margin: 0 auto; }
+
+        header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        header .shield { font-size: 2rem; }
+
+        header h1 {
+            font-size: 1.8rem;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        header span.badge {
+            background: rgba(255,255,255,0.2);
+            border-radius: 6px;
+            padding: 3px 10px;
+            font-size: 0.75rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        /* ── Stats Bar ── */
+        .stats-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat-pill {
+            background: rgba(255,255,255,0.15);
+            border-radius: 20px;
+            padding: 6px 16px;
+            font-size: 0.85rem;
+        }
+
+        .stat-pill strong { font-size: 1.1rem; }
+
+        /* ── Card ── */
+        .card {
+            background: rgba(255,255,255,0.97);
+            border-radius: 12px;
+            color: #333;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        /* ── Toolbar ── */
+        .toolbar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e8e8e8;
+            flex-wrap: wrap;
+        }
+
+        .toolbar h2 {
+            color: #1a472a;
+            font-size: 1.1rem;
+            flex: 1;
+        }
+
+        .search-input {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 7px 12px;
+            font-size: 0.9rem;
+            width: 200px;
+            transition: border-color 0.2s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #1a472a;
+        }
+
+        .filter-select {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 7px 10px;
+            font-size: 0.9rem;
+            background: #fff;
+            color: #333;
+            cursor: pointer;
+        }
+
+        /* ── Table ── */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        thead th {
+            background: #f5f5f5;
+            color: #555;
+            font-weight: 600;
+            padding: 11px 16px;
+            text-align: left;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        tbody tr:hover { background: #f9fff9; }
+
+        tbody tr.expanded { background: #f0faf3; }
+
+        td {
+            padding: 12px 16px;
+            vertical-align: middle;
+        }
+
+        .code-cell {
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+            font-size: 1rem;
+            color: #1a472a;
+            letter-spacing: 0.08em;
+        }
+
+        /* ── Phase Badge ── */
+        .phase-badge {
+            display: inline-block;
+            border-radius: 12px;
+            padding: 3px 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .phase-playing   { background: #d4edda; color: #155724; }
+        .phase-settlement { background: #fff3cd; color: #856404; }
+        .phase-complete  { background: #cce5ff; color: #004085; }
+
+        /* ── Action Buttons ── */
+        .btn-details {
+            background: #1a472a;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-details:hover { background: #2d5a3f; }
+
+        .btn-delete {
+            background: #fff;
+            color: #dc3545;
+            border: 1.5px solid #dc3545;
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-delete:hover { background: #dc3545; color: #fff; }
+
+        .actions { display: flex; gap: 8px; align-items: center; }
+
+        /* ── Expanded Details Panel ── */
+        .details-row td {
+            padding: 0;
+            background: #f8fdf9;
+        }
+
+        .details-panel {
+            padding: 20px 24px;
+            border-top: 2px solid #1a472a;
+        }
+
+        .details-panel h4 {
+            color: #1a472a;
+            margin-bottom: 14px;
+            font-size: 0.95rem;
+        }
+
+        .details-meta {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item { font-size: 0.85rem; color: #555; }
+        .meta-item strong { color: #333; display: block; font-size: 0.92rem; }
+
+        .players-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .players-table th {
+            background: #e8f5e9;
+            color: #1a472a;
+            padding: 8px 12px;
+            text-align: left;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .players-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid #eee;
+            color: #444;
+        }
+
+        .players-table tr:last-child td { border-bottom: none; }
+
+        .cashed-badge {
+            display: inline-block;
+            background: #fff3cd;
+            color: #856404;
+            border-radius: 10px;
+            padding: 1px 8px;
+            font-size: 0.72rem;
+            font-weight: 600;
+        }
+
+        /* ── Empty / Loading ── */
+        .empty-row td {
+            text-align: center;
+            padding: 40px;
+            color: #aaa;
+            font-size: 0.95rem;
+        }
+
+        /* ── Confirm Dialog ── */
+        .confirm-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .confirm-overlay.hidden { display: none; }
+
+        .confirm-box {
+            background: #fff;
+            border-radius: 12px;
+            padding: 28px;
+            max-width: 380px;
+            width: 100%;
+            color: #333;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+            text-align: center;
+        }
+
+        .confirm-box .warn-icon { font-size: 2.5rem; margin-bottom: 12px; }
+        .confirm-box h3 { margin-bottom: 8px; color: #dc3545; }
+        .confirm-box p { font-size: 0.9rem; color: #666; margin-bottom: 22px; line-height: 1.5; }
+
+        .confirm-actions { display: flex; gap: 12px; justify-content: center; }
+
+        .btn-confirm-delete {
+            background: #dc3545;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 22px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-confirm-delete:hover { background: #c82333; }
+
+        .btn-cancel {
+            background: #f5f5f5;
+            color: #555;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 22px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-cancel:hover { background: #e0e0e0; }
+
+        /* ── Toast ── */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: #333;
+            color: #fff;
+            padding: 10px 22px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: transform 0.3s;
+            z-index: 2000;
+        }
+
+        .toast.show { transform: translateX(-50%) translateY(0); }
+        .toast.success { background: #28a745; }
+        .toast.error   { background: #dc3545; }
+
+        /* ── Refresh button ── */
+        .btn-refresh {
+            background: none;
+            border: 1.5px solid #1a472a;
+            border-radius: 8px;
+            color: #1a472a;
+            padding: 7px 14px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-refresh:hover { background: #1a472a; color: #fff; }
+
+        @media (max-width: 640px) {
+            .search-input { width: 140px; }
+            td, th { padding: 10px 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Access Denied -->
+    <div id="access-denied" class="hidden">
+        <div class="lock">🔒</div>
+        <h1>Access Denied</h1>
+        <p>Invalid or missing admin key.</p>
+    </div>
+
+    <!-- Admin Shell -->
+    <div id="admin-shell" class="hidden">
+        <header>
+            <span class="shield">🛡️</span>
+            <h1>PokerSplit Admin</h1>
+            <span class="badge">Internal</span>
+        </header>
+
+        <div class="stats-bar" id="stats-bar"></div>
+
+        <div class="card">
+            <div class="toolbar">
+                <h2>All Games</h2>
+                <input class="search-input" id="search-input" type="text" placeholder="Search code or phase…">
+                <select class="filter-select" id="phase-filter">
+                    <option value="">All phases</option>
+                    <option value="playing">Playing</option>
+                    <option value="settlement">Settlement</option>
+                    <option value="complete">Complete</option>
+                </select>
+                <button class="btn-refresh" id="btn-refresh">↻ Refresh</button>
+            </div>
+
+            <table id="games-table">
+                <thead>
+                    <tr>
+                        <th>Game Code</th>
+                        <th>Phase</th>
+                        <th>Buy-in</th>
+                        <th>Players</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="games-tbody">
+                    <tr class="empty-row"><td colspan="6">Loading…</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Delete Confirm Dialog -->
+    <div id="confirm-overlay" class="confirm-overlay hidden">
+        <div class="confirm-box">
+            <div class="warn-icon">⚠️</div>
+            <h3>Delete Game?</h3>
+            <p id="confirm-text">This will permanently delete the game and all player data. This cannot be undone.</p>
+            <div class="confirm-actions">
+                <button class="btn-confirm-delete" id="btn-confirm-delete">Yes, Delete</button>
+                <button class="btn-cancel" id="btn-cancel-delete">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast"></div>
+
+    <script type="module">
+        import { fetchAllGames, fetchGamePlayers, deleteGame } from '/js/admin.js';
+
+        // ── SHA-256 Key Validation ──────────────────────────────
+        const ADMIN_KEY_HASH = '3598b5ecf2f56d2133bb3d7f44492cf7fafa1725700bd8a1f26b58f99a555c18';
+
+        async function sha256(text) {
+            const data = new TextEncoder().encode(text);
+            const buf  = await crypto.subtle.digest('SHA-256', data);
+            return Array.from(new Uint8Array(buf))
+                .map(b => b.toString(16).padStart(2, '0'))
+                .join('');
+        }
+
+        async function isAuthorized() {
+            const key = new URLSearchParams(window.location.search).get('key');
+            if (!key) return false;
+            return (await sha256(key)) === ADMIN_KEY_HASH;
+        }
+
+        // ── State ───────────────────────────────────────────────
+        let allGames   = [];
+        let expandedId = null;   // game id whose detail row is open
+        let deleteTarget = null; // { id, code }
+
+        // ── Helpers ─────────────────────────────────────────────
+        function fmt(amount) {
+            return '$' + (amount || 0).toFixed(2);
+        }
+
+        function fmtDate(iso) {
+            if (!iso) return '—';
+            const d = new Date(iso);
+            return d.toLocaleDateString('en-US', {
+                month: 'short', day: 'numeric', year: 'numeric',
+                hour: '2-digit', minute: '2-digit'
+            });
+        }
+
+        function showToast(msg, type = '') {
+            const el = document.getElementById('toast');
+            el.textContent = msg;
+            el.className = 'toast show ' + type;
+            setTimeout(() => el.classList.remove('show'), 3000);
+        }
+
+        // ── Stats Bar ───────────────────────────────────────────
+        function renderStats(games) {
+            const playing    = games.filter(g => g.phase === 'playing').length;
+            const settlement = games.filter(g => g.phase === 'settlement').length;
+            const complete   = games.filter(g => g.phase === 'complete').length;
+
+            document.getElementById('stats-bar').innerHTML = `
+                <div class="stat-pill">Total <strong>${games.length}</strong></div>
+                <div class="stat-pill">Playing <strong>${playing}</strong></div>
+                <div class="stat-pill">Settlement <strong>${settlement}</strong></div>
+                <div class="stat-pill">Complete <strong>${complete}</strong></div>
+            `;
+        }
+
+        // ── Render Table ────────────────────────────────────────
+        function filteredGames() {
+            const q     = document.getElementById('search-input').value.trim().toLowerCase();
+            const phase = document.getElementById('phase-filter').value;
+            return allGames.filter(g => {
+                const matchQ     = !q || g.game_code.toLowerCase().includes(q) || g.phase.includes(q);
+                const matchPhase = !phase || g.phase === phase;
+                return matchQ && matchPhase;
+            });
+        }
+
+        async function renderTable() {
+            const games = filteredGames();
+            const tbody = document.getElementById('games-tbody');
+            tbody.innerHTML = '';
+
+            if (games.length === 0) {
+                tbody.innerHTML = '<tr class="empty-row"><td colspan="6">No games found.</td></tr>';
+                return;
+            }
+
+            for (const game of games) {
+                const isExpanded = expandedId === game.id;
+
+                // Main row
+                const tr = document.createElement('tr');
+                if (isExpanded) tr.classList.add('expanded');
+                tr.dataset.id = game.id;
+
+                tr.innerHTML = `
+                    <td class="code-cell">${game.game_code}</td>
+                    <td><span class="phase-badge phase-${game.phase}">${game.phase}</span></td>
+                    <td>${fmt(game.buy_in_amount)}</td>
+                    <td id="pcount-${game.id}">—</td>
+                    <td>${fmtDate(game.created_at)}</td>
+                    <td>
+                        <div class="actions">
+                            <button class="btn-details" data-id="${game.id}">
+                                ${isExpanded ? 'Hide' : 'Details'}
+                            </button>
+                            <button class="btn-delete" data-id="${game.id}" data-code="${game.game_code}">
+                                Delete
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+
+                // Load player count asynchronously
+                loadPlayerCount(game.id);
+
+                // Details row (visible if expanded)
+                if (isExpanded) {
+                    const detailTr = document.createElement('tr');
+                    detailTr.className = 'details-row';
+                    detailTr.dataset.detailFor = game.id;
+                    const td = document.createElement('td');
+                    td.colSpan = 6;
+                    td.innerHTML = '<div class="details-panel"><em>Loading players…</em></div>';
+                    detailTr.appendChild(td);
+                    tbody.appendChild(detailTr);
+                    loadDetails(game, td);
+                }
+            }
+
+            // Attach event listeners
+            tbody.querySelectorAll('.btn-details').forEach(btn => {
+                btn.addEventListener('click', e => {
+                    e.stopPropagation();
+                    const id = btn.dataset.id;
+                    expandedId = expandedId === id ? null : id;
+                    renderTable();
+                });
+            });
+
+            tbody.querySelectorAll('.btn-delete').forEach(btn => {
+                btn.addEventListener('click', e => {
+                    e.stopPropagation();
+                    deleteTarget = { id: btn.dataset.id, code: btn.dataset.code };
+                    document.getElementById('confirm-text').textContent =
+                        `Permanently delete game "${btn.dataset.code}" and all its player data? This cannot be undone.`;
+                    document.getElementById('confirm-overlay').classList.remove('hidden');
+                });
+            });
+        }
+
+        // ── Player Count ────────────────────────────────────────
+        const countCache = {};
+
+        async function loadPlayerCount(gameId) {
+            if (countCache[gameId] !== undefined) {
+                const el = document.getElementById(`pcount-${gameId}`);
+                if (el) el.textContent = countCache[gameId];
+                return;
+            }
+            const { players } = await fetchGamePlayers(gameId);
+            countCache[gameId] = players.length;
+            const el = document.getElementById(`pcount-${gameId}`);
+            if (el) el.textContent = players.length;
+        }
+
+        // ── Game Details Panel ───────────────────────────────────
+        async function loadDetails(game, td) {
+            const { players, error } = await fetchGamePlayers(game.id);
+
+            if (error) {
+                td.querySelector('.details-panel').innerHTML =
+                    '<p style="color:#dc3545">Failed to load players.</p>';
+                return;
+            }
+
+            const totalPot = players.reduce((s, p) => s + p.buy_ins * game.buy_in_amount, 0);
+
+            let playersHtml = players.length === 0
+                ? '<p style="color:#aaa;font-size:0.85rem">No players.</p>'
+                : `<table class="players-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Buy-ins</th>
+                            <th>Invested</th>
+                            <th>Wins</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${players.map((p, i) => `
+                        <tr>
+                            <td>${i + 1}</td>
+                            <td><strong>${p.name}</strong></td>
+                            <td>${p.buy_ins}</td>
+                            <td>${fmt(p.buy_ins * game.buy_in_amount)}</td>
+                            <td>${p.wins !== null ? fmt(p.wins) : '—'}</td>
+                            <td>${p.cashed_out
+                                ? '<span class="cashed-badge">Cashed Out</span>'
+                                : '<span style="color:#28a745;font-size:0.8rem">Active</span>'}</td>
+                        </tr>`).join('')}
+                    </tbody>
+                </table>`;
+
+            td.innerHTML = `
+                <div class="details-panel">
+                    <h4>Game Details — ${game.game_code}</h4>
+                    <div class="details-meta">
+                        <div class="meta-item">
+                            <strong>${fmt(game.buy_in_amount)}</strong>
+                            Buy-in amount
+                        </div>
+                        <div class="meta-item">
+                            <strong>${fmt(totalPot)}</strong>
+                            Total pot
+                        </div>
+                        <div class="meta-item">
+                            <strong>${players.length}</strong>
+                            Players
+                        </div>
+                        <div class="meta-item">
+                            <strong>${game.phase}</strong>
+                            Phase
+                        </div>
+                        <div class="meta-item">
+                            <strong>${fmtDate(game.created_at)}</strong>
+                            Created
+                        </div>
+                        <div class="meta-item" style="font-size:0.78rem;color:#aaa;word-break:break-all">
+                            <strong style="color:#aaa">ID</strong>
+                            ${game.id}
+                        </div>
+                    </div>
+                    ${playersHtml}
+                </div>
+            `;
+        }
+
+        // ── Delete Flow ─────────────────────────────────────────
+        document.getElementById('btn-confirm-delete').addEventListener('click', async () => {
+            if (!deleteTarget) return;
+            document.getElementById('confirm-overlay').classList.add('hidden');
+
+            const { error } = await deleteGame(deleteTarget.id);
+            if (error) {
+                showToast('Delete failed: ' + error.message, 'error');
+            } else {
+                showToast(`Game ${deleteTarget.code} deleted.`, 'success');
+                delete countCache[deleteTarget.id];
+                if (expandedId === deleteTarget.id) expandedId = null;
+                allGames = allGames.filter(g => g.id !== deleteTarget.id);
+                renderStats(allGames);
+                renderTable();
+            }
+            deleteTarget = null;
+        });
+
+        document.getElementById('btn-cancel-delete').addEventListener('click', () => {
+            document.getElementById('confirm-overlay').classList.add('hidden');
+            deleteTarget = null;
+        });
+
+        // ── Search / Filter ─────────────────────────────────────
+        document.getElementById('search-input').addEventListener('input', renderTable);
+        document.getElementById('phase-filter').addEventListener('change', renderTable);
+
+        // ── Refresh ─────────────────────────────────────────────
+        document.getElementById('btn-refresh').addEventListener('click', loadGames);
+
+        async function loadGames() {
+            document.getElementById('games-tbody').innerHTML =
+                '<tr class="empty-row"><td colspan="6">Loading…</td></tr>';
+            const { games, error } = await fetchAllGames();
+            if (error) {
+                showToast('Failed to load games: ' + error.message, 'error');
+                document.getElementById('games-tbody').innerHTML =
+                    '<tr class="empty-row"><td colspan="6">Error loading games.</td></tr>';
+                return;
+            }
+            allGames = games;
+            renderStats(games);
+            renderTable();
+        }
+
+        // ── Boot ─────────────────────────────────────────────────
+        (async () => {
+            if (await isAuthorized()) {
+                document.getElementById('admin-shell').classList.remove('hidden');
+                loadGames();
+            } else {
+                document.getElementById('access-denied').classList.remove('hidden');
+            }
+        })();
+    </script>
+</body>
+</html>

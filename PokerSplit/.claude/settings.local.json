@@ -4,7 +4,10 @@
       "WebSearch",
       "Bash(npm run build:*)",
       "WebFetch(domain:pokersplit.org)",
-      "Bash(claude mcp --help:*)"
+      "Bash(claude mcp --help:*)",
+      "Bash(node:*)",
+      "Bash(cd /c/Users/svarukal/source/repos/LearningGames/PokerSplit && vercel --version 2>&1 && vercel whoami 2>&1)",
+      "Bash(cd /c/Users/svarukal/source/repos/LearningGames/PokerSplit && vercel --prod 2>&1)"
     ]
   }
 }

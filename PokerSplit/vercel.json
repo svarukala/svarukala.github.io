@@ -11,7 +11,11 @@
       "destination": "/resources.html"
     },
     {
-      "source": "/((?!resources\\.html$|assets/|sitemap\\.xml$|robots\\.txt$|og-image\\.png$).*)",
+      "source": "/admin",
+      "destination": "/admin.html"
+    },
+    {
+      "source": "/((?!resources\\.html$|admin\\.html$|assets/|sitemap\\.xml$|robots\\.txt$|og-image\\.png$).*)",
       "destination": "/index.html"
     }
   ],

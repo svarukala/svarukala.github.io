@@ -1070,6 +1070,125 @@
                 flex-direction: column;
             }
         }
+
+        /* Survey Bubble */
+        .survey-bubble {
+            position: fixed;
+            bottom: 80px;
+            left: 20px;
+            background: #fff;
+            color: #333;
+            border-radius: 16px;
+            padding: 16px 18px;
+            max-width: 255px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.28);
+            cursor: pointer;
+            z-index: 99;
+            opacity: 0;
+            transform: translateY(16px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            border: 2px solid #1a472a;
+            pointer-events: none;
+        }
+
+        .survey-bubble.show {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        /* Chat bubble tail */
+        .survey-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 22px;
+            border-width: 6px 6px 0;
+            border-style: solid;
+            border-color: #1a472a transparent transparent;
+        }
+
+        .survey-bubble-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            gap: 8px;
+        }
+
+        .survey-bubble-title {
+            font-weight: 700;
+            color: #1a472a;
+            font-size: 0.92rem;
+            line-height: 1.3;
+        }
+
+        .survey-bubble-dismiss {
+            background: none;
+            border: none;
+            color: #aaa;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0 2px;
+            line-height: 1;
+            flex-shrink: 0;
+            transform: none;
+        }
+
+        .survey-bubble-dismiss:hover {
+            color: #555;
+            background: none;
+            transform: none;
+        }
+
+        .survey-bubble-questions {
+            list-style: none;
+            margin: 0 0 10px;
+            padding: 0;
+            font-size: 0.82rem;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .survey-bubble-questions li::before {
+            content: '→ ';
+            color: #1a472a;
+            font-weight: bold;
+        }
+
+        .survey-bubble-cta {
+            font-size: 0.78rem;
+            color: #1a472a;
+            font-weight: 700;
+            text-align: center;
+            letter-spacing: 0.02em;
+        }
+
+        /* Pulsing notification dot */
+        .survey-dot {
+            position: fixed;
+            bottom: 76px;
+            left: 20px;
+            width: 10px;
+            height: 10px;
+            background: #e74c3c;
+            border-radius: 50%;
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            animation: surveyDotPulse 1.8s infinite;
+            pointer-events: none;
+        }
+
+        .survey-dot.show {
+            opacity: 1;
+        }
+
+        @keyframes surveyDotPulse {
+            0%   { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7); }
+            70%  { box-shadow: 0 0 0 9px rgba(231, 76, 60, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
+        }
     </style>
 </head>
 <body>
@@ -1331,6 +1450,22 @@
     <button class="feedback-btn" onclick="window.openFeedback()" title="Send Feedback">
         <span style="font-size: 24px;">💬</span>
     </button>
+
+    <!-- Survey Bubble -->
+    <div class="survey-dot" id="survey-dot"></div>
+    <div id="survey-bubble" class="survey-bubble" onclick="window.openSurveyFeedback()">
+        <div class="survey-bubble-header">
+            <span class="survey-bubble-title">Help us build a better PokerSplit! 🎯</span>
+            <button class="survey-bubble-dismiss" onclick="window.dismissSurveyBubble(event)" title="Dismiss">×</button>
+        </div>
+        <ul class="survey-bubble-questions">
+            <li>Want a mobile app?</li>
+            <li>Split food &amp; drinks separately?</li>
+            <li>Login to track your game history?</li>
+            <li>Other ideas to share?</li>
+        </ul>
+        <div class="survey-bubble-cta">Tap to share your thoughts →</div>
+    </div>
 
     <!-- Feedback Modal -->
     <div id="feedback-modal" class="modal-overlay hidden" onclick="window.closeFeedbackOnOverlay(event)">

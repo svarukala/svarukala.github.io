@@ -61,7 +61,51 @@ function showView(viewName) {
         views[key].classList.toggle('hidden', key !== viewName);
     });
     appState.currentView = viewName;
+
+    if (viewName === 'home') {
+        scheduleSurveyBubble();
+    } else {
+        hideSurveyBubble();
+    }
 }
+
+// ============================================
+// SURVEY BUBBLE
+// ============================================
+
+let surveyBubbleTimer = null;
+
+function scheduleSurveyBubble() {
+    const dismissed = localStorage.getItem('pokerSplitSurveyDismissed');
+    if (dismissed) return;
+
+    surveyBubbleTimer = setTimeout(() => {
+        const bubble = document.getElementById('survey-bubble');
+        const dot = document.getElementById('survey-dot');
+        bubble.classList.add('show');
+        dot.classList.add('show');
+    }, 1800);
+}
+
+function hideSurveyBubble() {
+    clearTimeout(surveyBubbleTimer);
+    const bubble = document.getElementById('survey-bubble');
+    const dot = document.getElementById('survey-dot');
+    bubble.classList.remove('show');
+    dot.classList.remove('show');
+}
+
+window.dismissSurveyBubble = function(event) {
+    event.stopPropagation();
+    localStorage.setItem('pokerSplitSurveyDismissed', '1');
+    hideSurveyBubble();
+};
+
+window.openSurveyFeedback = function() {
+    hideSurveyBubble();
+    localStorage.setItem('pokerSplitSurveyDismissed', '1');
+    window.openFeedback();
+};
 
 // ============================================
 // HOME VIEW
