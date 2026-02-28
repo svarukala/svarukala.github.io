@@ -7,7 +7,16 @@
       "Bash(claude mcp --help:*)",
       "Bash(node:*)",
       "Bash(cd /c/Users/svarukal/source/repos/LearningGames/PokerSplit && vercel --version 2>&1 && vercel whoami 2>&1)",
-      "Bash(cd /c/Users/svarukal/source/repos/LearningGames/PokerSplit && vercel --prod 2>&1)"
+      "Bash(cd /c/Users/svarukal/source/repos/LearningGames/PokerSplit && vercel --prod 2>&1)",
+      "Bash(cd c:/sridev/PokerSplit && npx create-expo-app@latest . --template blank-typescript 2>&1)",
+      "Bash(cd c:/sridev/PokerSplit && npx expo install expo-router @supabase/supabase-js @react-native-async-storage/async-storage zustand expo-clipboard react-native-qrcode-svg @gorhom/bottom-sheet react-native-gesture-handler react-native-reanimated react-native-safe-area-context react-native-screens 2>&1)",
+      "Bash(cd c:/sridev/PokerSplit && npx tsc --noEmit 2>&1)",
+      "Bash(cd c:/sridev/PokerSplit && git init 2>&1)",
+      "Bash(cd c:/sridev/PokerSplit && git add . && git status 2>&1)",
+      "Bash(cd c:/sridev/PokerSplit && git commit -m \"$\\(cat <<'EOF'\nfeat: initialize Expo TypeScript project with dependencies\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>\nEOF\n\\)\" 2>&1)",
+      "Bash(git:*)",
+      "Bash(cat:*)",
+      "Bash(tail:*)"
     ]
   }
 }

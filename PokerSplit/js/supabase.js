@@ -78,6 +78,20 @@ export async function createGame(buyInAmount, players) {
 }
 
 /**
+ * Fetch multiple games by their codes (single query)
+ * @param {Array<string>} codes - Array of game codes
+ * @returns {Object} - { games, error }
+ */
+export async function fetchGamesByCodes(codes) {
+    if (codes.length === 0) return { games: [], error: null };
+    const { data, error } = await supabase
+        .from('games')
+        .select('*')
+        .in('game_code', codes.map(c => c.toUpperCase()));
+    return { games: data || [], error };
+}
+
+/**
  * Fetch a game by its code
  * @param {string} gameCode - The 6-character game code
  * @returns {Object} - { game, players, error }
@@ -113,6 +127,14 @@ export async function fetchGameByCode(gameCode) {
  * @param {string} gameId - The game UUID
  * @param {string} phase - New phase ('playing', 'settlement', 'complete')
  */
+export async function cancelGame(gameId) {
+    const { error } = await supabase
+        .from('games')
+        .update({ phase: 'cancelled' })
+        .eq('id', gameId);
+    return { error };
+}
+
 export async function updateGamePhase(gameId, phase) {
     const { error } = await supabase
         .from('games')

@@ -7,7 +7,7 @@
     <meta name="robots" content="noindex, nofollow">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        .hidden { display: none; }
+        .hidden { display: none !important; }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -427,6 +427,27 @@
         </div>
     </div>
 
+    <!-- Feedback Table -->
+    <div id="feedback-section" class="card hidden" style="margin-top: 20px;">
+        <div class="toolbar">
+            <h2>Feedback</h2>
+            <button class="btn-refresh" id="btn-refresh-feedback">↻ Refresh</button>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Rating</th>
+                    <th>Message</th>
+                    <th>Email</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody id="feedback-tbody">
+                <tr class="empty-row"><td colspan="4">Loading…</td></tr>
+            </tbody>
+        </table>
+    </div>
+
     <!-- Delete Confirm Dialog -->
     <div id="confirm-overlay" class="confirm-overlay hidden">
         <div class="confirm-box">
@@ -444,7 +465,7 @@
     <div id="toast" class="toast"></div>
 
     <script type="module">
-        import { fetchAllGames, fetchGamePlayers, deleteGame } from '/js/admin.js';
+        import { fetchAllGames, fetchGamePlayers, deleteGame, fetchAllFeedback } from '/js/admin.js';
 
         // ── SHA-256 Key Validation ──────────────────────────────
         const ADMIN_KEY_HASH = '3598b5ecf2f56d2133bb3d7f44492cf7fafa1725700bd8a1f26b58f99a555c18';
@@ -724,11 +745,45 @@
             renderTable();
         }
 
+        // ── Feedback ─────────────────────────────────────────────
+        function renderStars(rating) {
+            if (!rating) return '<span style="color:#aaa">—</span>';
+            return '★'.repeat(rating) + '☆'.repeat(5 - rating);
+        }
+
+        async function loadFeedback() {
+            document.getElementById('feedback-tbody').innerHTML =
+                '<tr class="empty-row"><td colspan="4">Loading…</td></tr>';
+            const { feedback, error } = await fetchAllFeedback();
+            if (error) {
+                document.getElementById('feedback-tbody').innerHTML =
+                    '<tr class="empty-row"><td colspan="4">Error loading feedback.</td></tr>';
+                return;
+            }
+            if (feedback.length === 0) {
+                document.getElementById('feedback-tbody').innerHTML =
+                    '<tr class="empty-row"><td colspan="4">No feedback yet.</td></tr>';
+                return;
+            }
+            document.getElementById('feedback-tbody').innerHTML = feedback.map(f => `
+                <tr>
+                    <td style="color:#f4a31a;letter-spacing:2px">${renderStars(f.rating)}</td>
+                    <td style="max-width:340px;word-break:break-word">${f.message || '<span style="color:#aaa">—</span>'}</td>
+                    <td>${f.email || '<span style="color:#aaa">—</span>'}</td>
+                    <td>${fmtDate(f.created_at)}</td>
+                </tr>
+            `).join('');
+        }
+
+        document.getElementById('btn-refresh-feedback').addEventListener('click', loadFeedback);
+
         // ── Boot ─────────────────────────────────────────────────
         (async () => {
             if (await isAuthorized()) {
                 document.getElementById('admin-shell').classList.remove('hidden');
+                document.getElementById('feedback-section').classList.remove('hidden');
                 loadGames();
+                loadFeedback();
             } else {
                 document.getElementById('access-denied').classList.remove('hidden');
             }

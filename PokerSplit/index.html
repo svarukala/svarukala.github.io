@@ -166,6 +166,27 @@
             border-bottom: 2px solid #1a472a;
         }
 
+        .btn-back {
+            display: block;
+            margin-bottom: 16px;
+            background: none;
+            color: #1a472a;
+            border: 1.5px solid #1a472a;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            flex-shrink: 0;
+        }
+
+        .btn-back:hover {
+            background: #1a472a;
+            color: #fff;
+            transform: none;
+        }
+
         .form-group {
             margin-bottom: 20px;
         }
@@ -863,6 +884,87 @@
             color: #28a745;
         }
 
+        /* My Games Section */
+        .my-games-section {
+            margin-bottom: 22px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .my-games-section h3 {
+            color: #1a472a;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 10px;
+        }
+
+        .my-games-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .my-game-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 14px;
+            background: #f8fdf9;
+            border: 1.5px solid #c8e6c9;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .my-game-card:hover {
+            border-color: #1a472a;
+            background: #edf7ef;
+        }
+
+        .my-game-code {
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+            font-size: 1rem;
+            color: #1a472a;
+            letter-spacing: 0.08em;
+            flex: 1;
+        }
+
+        .my-game-meta {
+            font-size: 0.82rem;
+            color: #888;
+        }
+
+        .phase-tag {
+            display: inline-block;
+            border-radius: 10px;
+            padding: 2px 9px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .phase-tag-playing   { background: #d4edda; color: #155724; }
+        .phase-tag-settlement { background: #fff3cd; color: #856404; }
+
+        .btn-resume {
+            background: #1a472a;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 14px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .btn-resume:hover {
+            background: #2d5a3f;
+            transform: none;
+        }
+
         /* Home View Styles */
         .game-stats {
             display: flex;
@@ -1256,6 +1358,12 @@
                 </div>
             </div>
 
+            <!-- My Active Games -->
+            <div id="my-games-section" class="my-games-section hidden">
+                <h3>Your Active Games</h3>
+                <div id="my-games-list" class="my-games-list"></div>
+            </div>
+
             <div class="home-options">
                 <div class="option-card">
                     <h3>Start a New Game</h3>
@@ -1276,6 +1384,7 @@
 
         <!-- SETUP VIEW -->
         <section id="setup-view" class="card hidden">
+            <button id="btn-back-to-home" class="btn-back">&#8592; Back</button>
             <h2>Game Setup</h2>
 
             <div class="form-group">
@@ -1295,12 +1404,13 @@
 
             <div class="btn-group">
                 <button id="btn-start-game">Start Game</button>
-                <button id="btn-back-to-home" class="secondary">Cancel</button>
             </div>
         </section>
 
         <!-- GAME VIEW -->
         <section id="game-view" class="card hidden">
+            <button class="btn-back" onclick="window.newGame()">&#8592; Back</button>
+
             <div id="player-mode-indicator" class="player-mode hidden">
                 Viewing as Player (read-only)
             </div>
@@ -1349,6 +1459,7 @@
 
             <div class="btn-group dealer-only">
                 <button onclick="window.endGame()">End Game</button>
+                <button class="secondary" onclick="window.cancelGame()" style="background:#fff;color:#dc3545;border:1.5px solid #dc3545;">Cancel Game</button>
                 <p style="margin-top: 8px; font-size: 0.82rem; color: #888;">Don't worry — you'll enter each player's final chips and settle up on the next screen.</p>
             </div>
         </section>

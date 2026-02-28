@@ -2,6 +2,8 @@
 import {
     createGame,
     fetchGameByCode,
+    fetchGamesByCodes,
+    cancelGame,
     updateGamePhase,
     addPlayer as addPlayerToDb,
     updatePlayerBuyIns,
@@ -15,6 +17,7 @@ import {
 import {
     storeDealerToken,
     getDealerToken,
+    getDealerTokens,
     isDealer,
     getGameCodeFromURL,
     setGameCodeInURL,
@@ -133,8 +136,9 @@ function initHomeView() {
         }
     });
 
-    // Load game stats
+    // Load game stats and user's active games
     loadGameStats();
+    loadMyGames();
 }
 
 async function loadGameStats() {
@@ -162,6 +166,36 @@ async function loadGameStats() {
         statsContainer.classList.add('hidden');
     }
 }
+
+// ============================================
+// MY GAMES (dealer's active games from localStorage)
+// ============================================
+
+async function loadMyGames() {
+    const tokens = getDealerTokens();
+    const codes = Object.keys(tokens);
+    if (codes.length === 0) return;
+
+    const { games, error } = await fetchGamesByCodes(codes);
+    if (error) return;
+
+    const activeGames = games.filter(g => g.phase === 'playing' || g.phase === 'settlement');
+    if (activeGames.length === 0) return;
+
+    document.getElementById('my-games-section').classList.remove('hidden');
+    document.getElementById('my-games-list').innerHTML = activeGames.map(game => `
+        <div class="my-game-card" onclick="window.resumeGame('${game.game_code}')">
+            <span class="my-game-code">${game.game_code}</span>
+            <span class="my-game-meta">${formatCurrency(game.buy_in_amount)} buy-in</span>
+            <span class="phase-tag phase-tag-${game.phase}">${game.phase}</span>
+            <button class="btn-resume" onclick="event.stopPropagation(); window.resumeGame('${game.game_code}')">Resume</button>
+        </div>
+    `).join('');
+}
+
+window.resumeGame = function(code) {
+    joinGame(code);
+};
 
 // ============================================
 // SETUP VIEW (New Game)
@@ -314,6 +348,11 @@ async function loadGame(gameCode) {
             showView('results');
             renderResultsView();
             break;
+        case 'cancelled':
+            showToast('This game has been cancelled', 'error');
+            clearGameCodeFromURL();
+            showView('home');
+            break;
         default:
             showView('game');
             renderGameView();
@@ -389,6 +428,11 @@ function subscribeToGameUpdates(gameId) {
                     case 'complete':
                         showView('results');
                         renderResultsView();
+                        break;
+                    case 'cancelled':
+                        showToast('This game has been cancelled', 'error');
+                        clearGameCodeFromURL();
+                        showView('home');
                         break;
                 }
             }
@@ -647,6 +691,16 @@ window.endGame = async function() {
     if (confirm('End the game and enter final amounts?')) {
         await updateGamePhase(appState.game.id, 'settlement');
     }
+};
+
+window.cancelGame = async function() {
+    if (!confirm('Cancel this game? This cannot be undone.')) return;
+    const { error } = await cancelGame(appState.game.id);
+    if (error) {
+        showToast('Failed to cancel game', 'error');
+        return;
+    }
+    window.newGame();
 };
 
 // ============================================

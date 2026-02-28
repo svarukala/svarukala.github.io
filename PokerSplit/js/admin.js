@@ -25,3 +25,11 @@ export async function deleteGame(gameId) {
         .eq('id', gameId);
     return { error };
 }
+
+export async function fetchAllFeedback() {
+    const { data, error } = await supabase
+        .from('feedback')
+        .select('*')
+        .order('created_at', { ascending: false });
+    return { feedback: data || [], error };
+}
