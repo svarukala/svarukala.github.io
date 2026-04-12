@@ -4,7 +4,7 @@ import { resolve } from 'path';
 export default defineConfig({
     // Development server settings
     server: {
-        port: 3000,
+        port: 3001,
         open: true
     },
 

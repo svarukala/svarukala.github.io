@@ -30,19 +30,19 @@ function generateGameCode() {
  * Create a new game
  * @param {number} buyInAmount - The buy-in amount for the game
  * @param {Array} players - Array of player names
+ * @param {string|null} createdBy - Optional user UUID of the dealer
  * @returns {Object} - { game, dealerToken, error }
  */
-export async function createGame(buyInAmount, players) {
+export async function createGame(buyInAmount, players, createdBy = null) {
     const gameCode = generateGameCode();
+
+    const gameRecord = { game_code: gameCode, buy_in_amount: buyInAmount, phase: 'playing' };
+    if (createdBy) gameRecord.created_by = createdBy;
 
     // Insert the game
     const { data: game, error: gameError } = await supabase
         .from('games')
-        .insert({
-            game_code: gameCode,
-            buy_in_amount: buyInAmount,
-            phase: 'playing'
-        })
+        .insert(gameRecord)
         .select()
         .single();
 
@@ -207,6 +207,26 @@ export async function updatePlayerWins(playerId, wins) {
         console.error('Error updating player wins:', error);
     }
     return { error };
+}
+
+/**
+ * Link a player slot to a user account.
+ * Returns an error if no row matched (PGRST116).
+ * @param {string} playerId - The player UUID
+ * @param {string} userId - The user UUID to link
+ */
+export async function updatePlayerUserId(playerId, userId) {
+    const { data, error } = await supabase
+        .from('players')
+        .update({ user_id: userId })
+        .eq('id', playerId)
+        .select('id')
+        .single();
+
+    if (error && error.code === 'PGRST116') {
+        return { error: new Error('Player not found') };
+    }
+    return { error: error || null };
 }
 
 /**

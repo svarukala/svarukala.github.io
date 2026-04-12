@@ -135,8 +135,26 @@
         }
 
         header {
-            text-align: center;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            gap: 10px;
             margin-bottom: 30px;
+        }
+
+        .header-spacer {
+            /* mirrors .header-actions width so .header-text stays truly centered */
+        }
+
+        .header-text {
+            text-align: center;
+            grid-column: 2;
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: flex-end;
+            align-items: flex-start;
         }
 
         header h1 {
@@ -1139,6 +1157,26 @@
                 padding: 10px;
             }
 
+            header {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto;
+                text-align: center;
+            }
+
+            .header-spacer {
+                display: none;
+            }
+
+            .header-text {
+                grid-column: 1;
+            }
+
+            .header-actions {
+                grid-column: 1;
+                justify-content: center;
+                margin-top: 8px;
+            }
+
             header h1 {
                 font-size: 1.8rem;
             }
@@ -1171,6 +1209,331 @@
             .share-buttons {
                 flex-direction: column;
             }
+        }
+
+        /* ========================================
+           AUTH & PROFILE
+           ======================================== */
+        .header-profile-btn {
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+            border: 1.5px solid rgba(255,255,255,0.4);
+            padding: 6px 14px;
+            font-size: 0.85rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .header-profile-btn:hover {
+            background: rgba(255,255,255,0.28);
+            transform: none;
+        }
+
+        .avatar-initial {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            background: #fff;
+            color: #1a472a;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .profile-avatar-large {
+            width: 72px;
+            height: 72px;
+            background: #1a472a;
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0 auto;
+        }
+
+        /* Auth modal */
+        .auth-google-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            background: #fff;
+            color: #333;
+            border: 1.5px solid #ddd;
+            padding: 11px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 16px;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .auth-google-btn:hover {
+            background: #f5f5f5;
+            border-color: #bbb;
+            transform: none;
+        }
+
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0 0 16px;
+            color: #aaa;
+            font-size: 0.85rem;
+        }
+
+        .auth-divider::before,
+        .auth-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #eee;
+        }
+
+        .auth-error {
+            color: #dc3545;
+            font-size: 0.88rem;
+            margin-bottom: 12px;
+            min-height: 18px;
+        }
+
+        .auth-switch {
+            text-align: center;
+            font-size: 0.88rem;
+            color: #666;
+            margin-top: 12px;
+        }
+
+        .auth-switch a {
+            color: #1a472a;
+            font-weight: 600;
+        }
+
+        /* ========================================
+           HOME AUTH FEATURES SECTION
+           ======================================== */
+        .sign-in-prompt {
+            text-align: center;
+            padding: 15px 0 5px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .sign-in-prompt a {
+            color: #1a472a;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        /* ========================================
+           POOL PICKER (setup view)
+           ======================================== */
+        .pool-picker-section {
+            margin-bottom: 20px;
+            padding: 14px;
+            background: #f0f7f1;
+            border-radius: 8px;
+            border: 1.5px solid #c8e6c9;
+        }
+
+        .pool-picker-section label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #1a472a;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .pool-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .pool-chip-btn {
+            background: #fff;
+            color: #1a472a;
+            border: 1.5px solid #1a472a;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .pool-chip-btn:hover {
+            background: #1a472a;
+            color: #fff;
+            transform: none;
+        }
+
+        .claim-btn {
+            width: 100%;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            font-size: 1rem;
+            text-align: left;
+        }
+
+        /* ========================================
+           HISTORY VIEW
+           ======================================== */
+        .history-item {
+            padding: 14px 16px;
+            border: 1.5px solid #eee;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            background: #fafafa;
+        }
+
+        .history-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .history-code {
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+            color: #1a472a;
+            font-size: 1rem;
+            letter-spacing: 0.08em;
+        }
+
+        .history-date {
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        .history-stats {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .net-positive { color: #28a745; font-weight: 700; }
+        .net-negative { color: #dc3545; font-weight: 700; }
+        .net-neutral  { color: #6c757d; font-weight: 700; }
+
+        /* ========================================
+           LEADERBOARD VIEW
+           ======================================== */
+        .lb-tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .lb-tab {
+            padding: 7px 16px;
+            border-radius: 20px;
+            border: 1.5px solid #1a472a;
+            background: #fff;
+            color: #1a472a;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .lb-tab:hover,
+        .lb-tab.tab-active {
+            background: #1a472a;
+            color: #fff;
+            transform: none;
+        }
+
+        .lb-tab-group {
+            margin-bottom: 18px;
+        }
+
+        .lb-tab-group-label {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #888;
+            margin-bottom: 6px;
+        }
+
+        .rank-badge {
+            font-size: 1.1rem;
+        }
+
+        /* ========================================
+           PLAYER POOL VIEW
+           ======================================== */
+        .pool-player-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            background: #f8fdf9;
+            border: 1.5px solid #c8e6c9;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .pool-player-name {
+            font-weight: 600;
+            color: #1a472a;
+        }
+
+        .btn-remove-pool {
+            background: none;
+            border: none;
+            color: #dc3545;
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            transition: background 0.15s;
+        }
+
+        .btn-remove-pool:hover {
+            background: #fee;
+            transform: none;
+        }
+
+        .add-pool-form {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .add-pool-form input {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .add-pool-form input:focus {
+            outline: none;
+            border-color: #1a472a;
         }
 
         /* Survey Bubble */
@@ -1332,8 +1695,14 @@
 
     <div class="container">
         <header>
-            <h1>PokerSplit - The Easiest Way to Settle Poker Game Debts</h1>
-            <p>Free Poker Settlement Calculator for Home Games</p>
+            <div class="header-spacer"></div>
+            <div class="header-text">
+                <h1>PokerSplit - The Easiest Way to Settle Poker Game Debts</h1>
+                <p>Free Poker Settlement Calculator for Home Games</p>
+            </div>
+            <div class="header-actions">
+                <button class="header-profile-btn" id="profile-btn" onclick="window.openAuthOrProfile()">Sign In</button>
+            </div>
         </header>
 
         <!-- HOME VIEW -->
@@ -1380,6 +1749,40 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Auth-gated features (history, pool) — visible when signed in -->
+            <div id="auth-features-section" class="hidden" style="margin-top: 20px;">
+                <div class="section-divider"></div>
+                <div class="home-options">
+                    <div class="option-card">
+                        <h3>My History</h3>
+                        <p>View your stats from past games</p>
+                        <button onclick="window.showHistoryView()">View History</button>
+                    </div>
+                    <div class="option-card">
+                        <h3>Player Pool</h3>
+                        <p>Manage your regular player names</p>
+                        <button onclick="window.showPlayersView()">Manage Players</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Leaderboard — always visible -->
+            <div style="margin-top: 20px;">
+                <div class="section-divider"></div>
+                <div class="home-options">
+                    <div class="option-card">
+                        <h3>Leaderboard</h3>
+                        <p>Top players ranked by net winnings or win rate</p>
+                        <button onclick="window.showLeaderboardView()">View Leaderboard</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sign-in nudge for anonymous users -->
+            <p id="sign-in-prompt" class="sign-in-prompt">
+                <a onclick="window.openAuthOrProfile()">Sign in</a> to track your history and save player names.
+            </p>
         </section>
 
         <!-- SETUP VIEW -->
@@ -1395,6 +1798,12 @@
             <div class="form-group">
                 <label for="buyin-amount">Buy-in Amount ($)</label>
                 <input type="number" id="buyin-amount" min="1" step="0.01" value="20">
+            </div>
+
+            <!-- Pool picker — visible when user is signed in and has pool players -->
+            <div id="pool-picker-section" class="pool-picker-section hidden">
+                <label>From Your Player Pool</label>
+                <div id="pool-picker-chips" class="pool-chips"></div>
             </div>
 
             <div class="form-group">
@@ -1544,6 +1953,57 @@
             </div>
         </section>
 
+        <!-- HISTORY VIEW -->
+        <section id="history-view" class="card hidden">
+            <button class="btn-back" onclick="window.showView('home')">&#8592; Back</button>
+            <h2>My Game History</h2>
+            <div id="history-list"></div>
+        </section>
+
+        <!-- LEADERBOARD VIEW -->
+        <section id="leaderboard-view" class="card hidden">
+            <button class="btn-back" onclick="window.showView('home')">&#8592; Back</button>
+            <h2>Leaderboard</h2>
+
+            <div class="lb-tab-group">
+                <div class="lb-tab-group-label">Timeframe</div>
+                <div class="lb-tabs">
+                    <button class="lb-tab lb-tab-timeframe tab-active" data-value="all" onclick="window.setLeaderboardTimeframe('all')">All Time</button>
+                    <button class="lb-tab lb-tab-timeframe" data-value="monthly" onclick="window.setLeaderboardTimeframe('monthly')">This Month</button>
+                    <button class="lb-tab lb-tab-timeframe" data-value="weekly" onclick="window.setLeaderboardTimeframe('weekly')">This Week</button>
+                </div>
+            </div>
+
+            <div class="lb-tab-group">
+                <div class="lb-tab-group-label">Ranked by</div>
+                <div class="lb-tabs">
+                    <button class="lb-tab lb-tab-metric tab-active" data-value="net" onclick="window.setLeaderboardMetric('net')">Net Winnings</button>
+                    <button class="lb-tab lb-tab-metric" data-value="winrate" onclick="window.setLeaderboardMetric('winrate')">Win Rate</button>
+                </div>
+            </div>
+
+            <div id="leaderboard-list"></div>
+        </section>
+
+        <!-- PLAYER POOL VIEW -->
+        <section id="players-view" class="card hidden">
+            <button class="btn-back" onclick="window.showView('home')">&#8592; Back</button>
+            <h2>My Player Pool</h2>
+            <p style="color: #666; margin-bottom: 16px; font-size: 0.9rem;">Save regular player names to quickly fill in during game setup.</p>
+            <div id="pool-list"></div>
+            <div class="add-pool-form">
+                <input type="text" id="new-pool-player" placeholder="Player name" onkeypress="if(event.key==='Enter')window.addPoolPlayer()">
+                <button onclick="window.addPoolPlayer()">Add</button>
+            </div>
+        </section>
+
+        <!-- PROFILE VIEW -->
+        <section id="profile-view" class="card hidden">
+            <button class="btn-back" onclick="window.showView('home')">&#8592; Back</button>
+            <h2>Profile</h2>
+            <div id="profile-info"></div>
+        </section>
+
         <!-- Footer with Tip Jar -->
         <footer class="app-footer">
             <a href="https://buymeacoffee.com/Varuk" target="_blank" rel="noopener noreferrer" class="tip-jar-btn">
@@ -1611,6 +2071,63 @@
                 <button id="btn-submit-feedback" onclick="window.submitFeedback()">Submit Feedback</button>
                 <button class="secondary" onclick="window.closeFeedback()">Cancel</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Auth Modal -->
+    <div id="auth-modal" class="modal-overlay hidden" onclick="window.closeAuthOnOverlay(event)">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="auth-modal-title">Sign In</h3>
+                <button class="modal-close" onclick="window.closeAuth()">&times;</button>
+            </div>
+
+            <button class="auth-google-btn" onclick="window.submitGoogleAuth()">
+                <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"/></svg>
+                Continue with Google
+            </button>
+
+            <div class="auth-divider">or</div>
+
+            <div id="auth-name-group" class="form-group hidden">
+                <label for="auth-name">Display Name</label>
+                <input type="text" id="auth-name" placeholder="Your name" autocomplete="name">
+            </div>
+
+            <div class="form-group">
+                <label for="auth-email">Email</label>
+                <input type="email" id="auth-email" placeholder="you@example.com" autocomplete="email">
+            </div>
+
+            <div class="form-group">
+                <label for="auth-password">Password</label>
+                <input type="password" id="auth-password" placeholder="••••••••" autocomplete="current-password"
+                    onkeypress="if(event.key==='Enter')window.submitAuth()">
+            </div>
+
+            <p class="auth-error" id="auth-error"></p>
+
+            <div class="btn-group">
+                <button id="btn-auth-submit" onclick="window.submitAuth()">Sign In</button>
+                <button class="secondary" onclick="window.closeAuth()">Cancel</button>
+            </div>
+
+            <p class="auth-switch" id="auth-switch-text">
+                No account? <a href="#" onclick="window.switchAuthMode('signup'); return false;">Sign Up</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Claim Slot Modal -->
+    <div id="claim-slot-modal" class="modal-overlay hidden" onclick="window.closeClaimSlotOnOverlay(event)">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Claim Your Spot</h3>
+                <button class="modal-close" onclick="window.closeClaimSlot()">&times;</button>
+            </div>
+            <p class="feedback-note" style="margin-bottom: 16px;">Are you one of these players? Tap your name to link your account.</p>
+            <div id="claim-player-list"></div>
+            <button class="secondary" style="width:100%; margin-top: 8px;" onclick="window.closeClaimSlot()">Skip</button>
         </div>
     </div>
 
